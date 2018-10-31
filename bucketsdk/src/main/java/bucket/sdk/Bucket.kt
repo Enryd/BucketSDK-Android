@@ -68,56 +68,56 @@ class Bucket {
 
             if (shouldReturn) return
 
-//            val theURL = environment.billDenoms.build().toString()
+            val theURL = environment.billDenoms.build().toString()
 
-//            theURL.httpPost().header(Pair("countryId", countryCode!!)).responseJson {
-//                _, response, result ->
-//
-//                when (result) {
-//                    is Result.Success -> {
-//                        val responseJson = result.value.obj()
-//                        val denominations = responseJson.optJSONArray("denominations")
-//                        usesNaturalChangeFunction = responseJson.optBoolean("usesNaturalChangeFunction", false)
-//                        denominations?.let {
-//                            // Create our list of denominations:
-//                            val theDenoms : MutableList<Double> = ArrayList()
-//                            for (i in 0..(it.length()-1)) {
-//                                theDenoms[i] = it.getDouble(i)
-//                            }
-//                            Bucket.denoms = theDenoms
-//                        }
-//                        callback?.setBillDenoms()
-//                    }
-//                    is Result.Failure -> {
-//                        val error = response.bucketError
-//                        callback?.didError(error)
-//                    }
-//                }
-//            }
+            theURL.httpPost().header(Pair("countryId", countryCode!!)).responseJson {
+                _, response, result ->
 
-            BucketService.retrofit.billDenominations(
-                    terminalSecret = terminalSecret!!,
-                    countryId = countryCode!!)
-                    .map { response ->
-                        if (response.isSuccessful) {
-                            val denominations = response.body().denominations
-                            usesNaturalChangeFunction = response.body().usesNaturalChangeFunction
-                            denominations.let {
-                                // Create our list of denominations:
-                                val theDenoms : MutableList<Double> = ArrayList()
-                                for (i in 0..(it.size-1)) {
-                                    theDenoms[i] = it[i]
-                                }
-                                Bucket.denoms = theDenoms
+                when (result) {
+                    is Result.Success -> {
+                        val responseJson = result.value.obj()
+                        val denominations = responseJson.optJSONArray("denominations")
+                        usesNaturalChangeFunction = responseJson.optBoolean("usesNaturalChangeFunction", false)
+                        denominations?.let {
+                            // Create our list of denominations:
+                            val theDenoms : MutableList<Double> = ArrayList()
+                            for (i in 0..(it.length()-1)) {
+                                theDenoms[i] = it.getDouble(i)
                             }
-                            callback?.setBillDenoms()
-
-                        } else {
-                            val errorCode = response.body().errorCode
-                            val errorMessage = response.body().message
-                            callback?.didError(Error(errorMessage ?: "Unknown API Error", errorCode ?: "Unknown Error Code", response.code()))
+                            Bucket.denoms = theDenoms
                         }
+                        callback?.setBillDenoms()
                     }
+                    is Result.Failure -> {
+                        val error = response.bucketError
+                        callback?.didError(error)
+                    }
+                }
+            }
+
+//            BucketService.retrofit.billDenominations(
+//                    terminalSecret = terminalSecret!!,
+//                    countryId = countryCode!!)
+//                    .map { response ->
+//                        if (response.isSuccessful) {
+//                            val denominations = response.body().denominations
+//                            usesNaturalChangeFunction = response.body().usesNaturalChangeFunction
+//                            denominations.let {
+//                                // Create our list of denominations:
+//                                val theDenoms : MutableList<Double> = ArrayList()
+//                                for (i in 0..(it.size-1)) {
+//                                    theDenoms[i] = it[i]
+//                                }
+//                                Bucket.denoms = theDenoms
+//                            }
+//                            callback?.setBillDenoms()
+//
+//                        } else {
+//                            val errorCode = response.body().errorCode
+//                            val errorMessage = response.body().message
+//                            callback?.didError(Error(errorMessage ?: "Unknown API Error", errorCode ?: "Unknown Error Code", response.code()))
+//                        }
+//                    }
         }
 
         @SuppressLint("CheckResult")
@@ -129,50 +129,50 @@ class Bucket {
                 callback?.didError(Error("Please check your retailer id", "InvalidRetailer", 401))
             }
 
-            BucketService.retrofit.registerTerminal(
-                    countryId = countryCode,
-                    retailerId = retailerCode!!,
-                    registerTerminalBody = RegisterTerminalBody(terminalId = Build.SERIAL))
-                    .map { response ->
-                        if (response.isSuccessful) {
-                            val apiKey = response.body().apiKey
-                            val isApproved = response.body().isApproved
-                            // Set the terminal secret:
-                            Credentials.setCountryCode(countryCode)
-                            Credentials.setTerminalSecret(apiKey)
-                            callback?.success(isApproved)
+//            BucketService.retrofit.registerTerminal(
+//                    countryId = countryCode,
+//                    retailerId = retailerCode!!,
+//                    registerTerminalBody = RegisterTerminalBody(terminalId = Build.SERIAL))
+//                    .map { response ->
+//                        if (response.isSuccessful) {
+//                            val apiKey = response.body().apiKey
+//                            val isApproved = response.body().isApproved
+//                            // Set the terminal secret:
+//                            Credentials.setCountryCode(countryCode)
+//                            Credentials.setTerminalSecret(apiKey)
+//                            callback?.success(isApproved)
+//
+//                        } else {
+//                            val errorCode = response.body().errorCode
+//                            val errorMessage = response.body().message
+//                            callback?.didError(Error(errorMessage ?: "Unknown API Error", errorCode ?: "Unknown Error Code", response.code()))
+//                        }
+//                    }
 
-                        } else {
-                            val errorCode = response.body().errorCode
-                            val errorMessage = response.body().message
-                            callback?.didError(Error(errorMessage ?: "Unknown API Error", errorCode ?: "Unknown Error Code", response.code()))
-                        }
+            val json = JSONObject().apply { put("terminalId", Build.SERIAL) }
+
+            val theURL = environment.registerTerminal.build().toString()
+
+            theURL.httpPost().body(json.toString()).header(Pair("retailerId", retailerCode!!)).header(Pair("countryId", countryCode)).responseJson {
+                _, response, result ->
+
+                when (result) {
+                    is Result.Failure -> {
+                        val error = response.bucketError
+                        callback?.didError(error)
                     }
+                    is Result.Success -> {
+                        val responseJson = result.value.obj()
+                        val apiKey = responseJson.getString("apiKey")
+                        val isApproved = responseJson.getBoolean("isApproved")
+                        // Set the terminal secret:
+                        Credentials.setCountryCode(countryCode)
+                        Credentials.setTerminalSecret(apiKey)
+                        callback?.success(isApproved)
 
-//            val json = JSONObject().apply { put("terminalId", terminalId) }
-//
-//            val theURL = environment.registerTerminal.build().toString()
-
-//            theURL.httpPost().body(json.toString()).header(Pair("retailerId",retailerCode!!)).header(Pair("countryId", countryCode)).responseJson {
-//                _, response, result ->
-//
-//                when (result) {
-//                    is Result.Failure -> {
-//                        val error = response.bucketError
-//                        callback?.didError(error)
-//                    }
-//                    is Result.Success -> {
-//                        val responseJson = result.value.obj()
-//                        val apiKey = responseJson.getString("apiKey")
-//                        val isApproved = responseJson.getBoolean("isApproved")
-//                        // Set the terminal secret:
-//                        Credentials.setCountryCode(countryCode)
-//                        Credentials.setTerminalSecret(apiKey)
-//                        callback?.success(isApproved)
-//
-//                    }
-//                }
-//            }
+                    }
+                }
+            }
         }
     }
 }

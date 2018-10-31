@@ -35,10 +35,11 @@ class ExampleInstrumentedTest {
     @Test fun testRegisteringDevice() {
 
         Bucket.appContext = InstrumentationRegistry.getTargetContext()
-        Bucket.environment = DeploymentEnvironment.Staging
+        Bucket.environment = DeploymentEnvironment.Development
+
         Credentials.setRetailerCode("BCKT-1")
         // Get the client id & client secret for this retailer:
-        Bucket.registerTerminal("USD", object : RegisterTerminal {
+        Bucket.registerTerminal("US", object : RegisterTerminal {
             override fun success(isApproved: Boolean) {
                 assert(true)
             }
@@ -52,10 +53,11 @@ class ExampleInstrumentedTest {
     @Test fun testCreateTransaction() {
 
         Bucket.appContext = InstrumentationRegistry.getTargetContext()
+        Bucket.environment = DeploymentEnvironment.Development
         Credentials.apply {
             setRetailerCode("BCKT-1")
             setTerminalSecret("abc")
-            setCountryCode("USD")
+            setCountryCode("US")
         }
 
         val transaction = Transaction("RandomTransactionId", 0.54, 7.89)
@@ -65,7 +67,6 @@ class ExampleInstrumentedTest {
             }
 
             override fun didError(error: Error) {
-                Log.e("didError", error.message)
                 assertTrue(error.message ?: "", false)
             }
         })

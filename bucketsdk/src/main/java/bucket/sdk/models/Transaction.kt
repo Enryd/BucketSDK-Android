@@ -27,26 +27,26 @@ class Transaction(var clientTransactionId: String, var amount: Double, var total
     // The rest of these fields are specified by the retailer:
     var locationId                      : String? = null
 
-//    private fun updateWith(updateJSON: JSONObject?) {
-//
-//        if (updateJSON.isNil) return
-//
-//        this.customerCode = updateJSON!!.optString("customerCode", null)
-//        this.locationId = updateJSON.optString("locationId", null)
-//        this.bucketTransactionId = updateJSON.optInt("bucketTransactionId", 0)
-//        this.qrCodeContent = updateJSON.getURL("qrCodeContent")
-//        this.totalTransactionAmount = updateJSON.optDouble("totalTransactionAmount", 0.0)
-//    }
+    private fun updateWith(updateJSON: JSONObject?) {
 
-    private fun updateWith(transactionResponse: CreateTransactionResponse?) {
-        if (transactionResponse.isNil) return
+        if (updateJSON.isNil) return
 
-        customerCode = transactionResponse?.customerCode
-        locationId = transactionResponse?.locationId
-        bucketTransactionId = transactionResponse?.bucketTransactionId
-        qrCodeContent = URL(transactionResponse?.qrCodeContent)
-        totalTransactionAmount = transactionResponse?.amount ?: 0.00
+        this.customerCode = updateJSON!!.optString("customerCode", null)
+        this.locationId = updateJSON.optString("locationId", null)
+        this.bucketTransactionId = updateJSON.optString("bucketTransactionId", null)
+        this.qrCodeContent = updateJSON.getURL("qrCodeContent")
+        this.totalTransactionAmount = updateJSON.optDouble("totalTransactionAmount", 0.0)
     }
+
+//    private fun updateWith(transactionResponse: CreateTransactionResponse?) {
+//        if (transactionResponse.isNil) return
+//
+//        customerCode = transactionResponse?.customerCode
+//        locationId = transactionResponse?.locationId
+//        bucketTransactionId = transactionResponse?.bucketTransactionId
+//        qrCodeContent = URL(transactionResponse?.qrCodeContent)
+//        totalTransactionAmount = transactionResponse?.amount ?: 0.00
+//    }
 
     fun toJSON(): JSONObject {
 
@@ -61,7 +61,6 @@ class Transaction(var clientTransactionId: String, var amount: Double, var total
         if (!locationId.isNil) { obj.put("locationId", locationId!!) }
         if (!customerCode.isNil) { obj.put("customerCode", customerCode!!) }
         if (!qrCodeContent.isNil) { obj.put("qrCodeContent", qrCodeContent!!) }
-
 
         return obj
     }
@@ -87,40 +86,40 @@ class Transaction(var clientTransactionId: String, var amount: Double, var total
 
             if (shouldIReturn) return
 
-//            val url = Bucket.environment.transaction.appendPath(customerCode).build().toString()
-//
-//            url.httpDelete()
-//                    .header(Pair("x-functions-key", terminalSecret!!))
-//                    .header(Pair("retailerId", retailerCode!!))
-//                    .header(Pair("countryId", countryCode!!))
-//                    .header(Pair("terminalId", Build.SERIAL)).responseJson {
-//                        _, response, result ->
-//                        when (result) {
-//                            is Result.Success -> {
-//                                callback?.transactionDeleted()
-//                            }
-//                            is Result.Failure -> {
-//                                callback?.didError(response.bucketError)
-//                            }
-//                        }
-//                    }
+            val url = Bucket.environment.transaction.appendPath(customerCode).build().toString()
 
-            BucketService.retrofit.deleteTransaction(
-                    terminalSecret = terminalSecret!!,
-                    retailerId = retailerCode!!,
-                    countryId = countryCode!!,
-                    terminalId = Build.SERIAL,
-                    customerCode = customerCode)
-                    .map { response ->
-                        if (response.isSuccessful) {
-                            callback?.transactionDeleted()
-
-                        } else {
-                            val errorCode = response.body().errorCode
-                            val errorMessage = response.body().message
-                            callback?.didError(Error(errorMessage ?: "Unknown API Error", errorCode ?: "Unknown Error Code", response.code()))
+            url.httpDelete()
+                    .header(Pair("x-functions-key", terminalSecret!!))
+                    .header(Pair("retailerId", retailerCode!!))
+                    .header(Pair("countryId", countryCode!!))
+                    .header(Pair("terminalId", Build.SERIAL)).responseJson {
+                        _, response, result ->
+                        when (result) {
+                            is Result.Success -> {
+                                callback?.transactionDeleted()
+                            }
+                            is Result.Failure -> {
+                                callback?.didError(response.bucketError)
+                            }
                         }
                     }
+
+//            BucketService.retrofit.deleteTransaction(
+//                    terminalSecret = terminalSecret!!,
+//                    retailerId = retailerCode!!,
+//                    countryId = countryCode!!,
+//                    terminalId = Build.SERIAL,
+//                    customerCode = customerCode)
+//                    .map { response ->
+//                        if (response.isSuccessful) {
+//                            callback?.transactionDeleted()
+//
+//                        } else {
+//                            val errorCode = response.body().errorCode
+//                            val errorMessage = response.body().message
+//                            callback?.didError(Error(errorMessage ?: "Unknown API Error", errorCode ?: "Unknown Error Code", response.code()))
+//                        }
+//                    }
 
         }
     }
@@ -146,40 +145,40 @@ class Transaction(var clientTransactionId: String, var amount: Double, var total
 
         if (shouldIReturn) return
 
-//        val url = Bucket.environment.transaction.appendPath(customerCode).build().toString()
-//
-//        url.httpDelete()
-//                .header(Pair("x-functions-key", terminalSecret!!))
-//                .header(Pair("retailerId", retailerCode!!))
-//                .header(Pair("countryId", countryCode!!))
-//                .header(Pair("terminalId", Build.SERIAL)).responseJson {
-//                    _, response, result ->
-//                    when (result) {
-//                        is Result.Success -> {
-//                            callback?.transactionDeleted()
-//                        }
-//                        is Result.Failure -> {
-//                            callback?.didError(response.bucketError)
-//                        }
-//                    }
-//                }
+        val url = Bucket.environment.transaction.appendPath(customerCode).build().toString()
 
-        BucketService.retrofit.deleteTransaction(
-                terminalSecret = terminalSecret!!,
-                retailerId = retailerCode!!,
-                countryId = countryCode!!,
-                terminalId = Build.SERIAL,
-                customerCode = customerCode!!)
-                .map { response ->
-                    if (response.isSuccessful) {
-                        callback?.transactionDeleted()
-
-                    } else {
-                        val errorCode = response.body().errorCode
-                        val errorMessage = response.body().message
-                        callback?.didError(Error(errorMessage ?: "Unknown API Error", errorCode ?: "Unknown Error Code", response.code()))
+        url.httpDelete()
+                .header(Pair("x-functions-key", terminalSecret!!))
+                .header(Pair("retailerId", retailerCode!!))
+                .header(Pair("countryId", countryCode!!))
+                .header(Pair("terminalId", Build.SERIAL)).responseJson {
+                    _, response, result ->
+                    when (result) {
+                        is Result.Success -> {
+                            callback?.transactionDeleted()
+                        }
+                        is Result.Failure -> {
+                            callback?.didError(response.bucketError)
+                        }
                     }
                 }
+
+//        BucketService.retrofit.deleteTransaction(
+//                terminalSecret = terminalSecret!!,
+//                retailerId = retailerCode!!,
+//                countryId = countryCode!!,
+//                terminalId = Build.SERIAL,
+//                customerCode = customerCode!!)
+//                .map { response ->
+//                    if (response.isSuccessful) {
+//                        callback?.transactionDeleted()
+//
+//                    } else {
+//                        val errorCode = response.body().errorCode
+//                        val errorMessage = response.body().message
+//                        callback?.didError(Error(errorMessage ?: "Unknown API Error", errorCode ?: "Unknown Error Code", response.code()))
+//                    }
+//                }
 
     }
 
@@ -205,44 +204,45 @@ class Transaction(var clientTransactionId: String, var amount: Double, var total
 
         val jsonBody = this.toJSON()
 
-//        val url = Bucket.environment.transaction.build().toString()
-//
-//        url.httpPost()
-//                .body(jsonBody.toString())
-//                .header(Pair("x-functions-key", terminalSecret!!))
-//                .header(Pair("retailerId", retailerCode!!))
-//                .header(Pair("countryId", countryCode!!))
-//                .header(Pair("terminalId", Build.SERIAL)).responseJson {
-//                    request, response, result ->
-//                    Log.d("bucket.sdk REQUEST: ", request.toString())
-//                    when (result) {
-//                        is Result.Success -> {
-//                            this@Transaction.updateWith(result.value.obj())
-//                            callback?.transactionCreated()
-//                        }
-//                        is Result.Failure -> {
-//                            callback?.didError(response.bucketError)
-//                        }
-//                    }
-//                }
+        val url = Bucket.environment.transaction.build().toString()
 
-        BucketService.retrofit.createTransaction(
-                terminalSecret = terminalSecret!!,
-                retailerId = retailerCode!!,
-                countryId = countryCode!!,
-                terminalId = Build.SERIAL,
-                transaction = this)
-                .map { response ->
-                    if (response.isSuccessful) {
-                        updateWith(response.body())
-                        callback?.transactionCreated()
-
-                    } else {
-                        val errorCode = response.body().errorCode
-                        val errorMessage = response.body().message
-                        callback?.didError(Error(errorMessage ?: "Unknown API Error", errorCode ?: "Unknown Error Code", response.code()))
+        url.httpPost()
+                .header(Pair("x-functions-key", terminalSecret!!))
+                .header(Pair("retailerId", retailerCode!!))
+                .header(Pair("countryId", countryCode!!))
+                .header(Pair("terminalId", Build.SERIAL))
+                .body(jsonBody.toString()).responseJson {
+                    request, response, result ->
+                    Log.d("bucket.sdk REQUEST: ", request.toString())
+                    when (result) {
+                        is Result.Success -> {
+                            this@Transaction.updateWith(result.value.obj())
+                            callback?.transactionCreated()
+                        }
+                        is Result.Failure -> {
+                            callback?.didError(response.bucketError)
+                        }
                     }
                 }
+
+//        BucketService.retrofit.createTransaction(
+//                terminalSecret = terminalSecret!!,
+//                retailerId = retailerCode!!,
+//                countryId = countryCode!!,
+//                terminalId = Build.SERIAL,
+//                transaction = this)
+//                .map { response ->
+//                    if (response.isSuccessful) {
+//                        Log.e("response", "${response.body()}")
+//                        updateWith(response.body())
+//                        callback?.transactionCreated()
+//
+//                    } else {
+//                        val errorCode = response.body().errorCode
+//                        val errorMessage = response.body().message
+//                        callback?.didError(Error(errorMessage ?: "Unknown API Error", errorCode ?: "Unknown Error Code", response.code()))
+//                    }
+//                }
 
     }
 
