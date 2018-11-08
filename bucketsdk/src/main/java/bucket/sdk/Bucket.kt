@@ -169,13 +169,13 @@ class Bucket {
                         val name = responseJson.optString("retailerName", "")
                         val phone = responseJson.optString("retailerPhone", "")
                         // address assemble
-                        val addressObject = responseJson.optJSONObject("address")
-                        val address1 = addressObject.optString("address1", "")
-                        val address2 = addressObject.optString("address2", "")
-                        val address3 = addressObject.optString("address3", "")
-                        val postalCode = addressObject.optString("postalCode", "")
-                        val city = addressObject.optString("city", "")
-                        val state = addressObject.optString("state", "")
+                        val addressObject = responseJson.optJSONObject("address") ?: null
+                        val address1 = addressObject?.optString("address1", "") ?: ""
+                        val address2 = addressObject?.optString("address2", "") ?: ""
+                        val address3 = addressObject?.optString("address3", "") ?: ""
+                        val postalCode = addressObject?.optString("postalCode", "") ?: ""
+                        val city = addressObject?.optString("city", "") ?: ""
+                        val state = addressObject?.optString("state", "") ?: ""
                         var address = ""
                         if (address1 != null) address += "$address1\n"
                         if (address2 != null) address += "$address2\n"
