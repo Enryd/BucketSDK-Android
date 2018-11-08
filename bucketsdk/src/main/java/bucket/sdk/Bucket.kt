@@ -169,7 +169,7 @@ class Bucket {
                         val name = responseJson.optString("retailerName", "")
                         val phone = responseJson.optString("retailerPhone", "")
                         // address assemble
-                        val addressObject = responseJson.getJSONObject("address")
+                        val addressObject = responseJson.optJSONObject("address")
                         val address1 = addressObject.optString("address1", "")
                         val address2 = addressObject.optString("address2", "")
                         val address3 = addressObject.optString("address3", "")
