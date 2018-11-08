@@ -165,11 +165,31 @@ class Bucket {
                         val responseJson = result.value.obj()
                         val apiKey = responseJson.getString("apiKey")
                         val isApproved = responseJson.getBoolean("isApproved")
-                        // Set the terminal secret:
+                        val name = responseJson.getString("retailerName")
+                        val phone = responseJson.getString("retailerPhone")
+                        // address assemble
+                        val addressObject = responseJson.getJSONObject("address")
+                        val address1 = addressObject.getString("address1")
+                        val address2 = addressObject.getString("address2")
+                        val address3 = addressObject.getString("address3")
+                        val postalCode = addressObject.getString("postalCode")
+                        val city = addressObject.getString("city")
+                        val state = addressObject.getString("state")
+                        var address = ""
+                        if (address1 != null) address += "$address1\n"
+                        if (address2 != null) address += "$address2\n"
+                        if (address3 != null) address += "$address3\n"
+                        if (city != null) address += city
+                        if (state != null) address += ", $state"
+                        if (postalCode != null) address += ", $postalCode"
+
+                        // Set the terminal credentials:
                         Credentials.setCountryCode(countryCode)
                         Credentials.setTerminalSecret(apiKey)
+                        Credentials.setAddress(address)
+                        Credentials.setName(name)
+                        Credentials.setPhone(phone)
                         callback?.success(isApproved)
-
                     }
                 }
             }

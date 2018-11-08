@@ -43,5 +43,38 @@ object Credentials {
         }
         editor?.apply()
     }
+    @JvmStatic fun name(): String? {
+        return sharedPrefs?.getString("RETAILER_NAME", null)
+    }
+    @JvmStatic fun setName(value : String?) {
+        val editor = sharedPrefs?.edit()
+        if (value.isNil) { editor?.remove("RETAILER_NAME") }
+        else {
+            editor?.putString("RETAILER_NAME", value)
+        }
+        editor?.apply()
+    }
+    @JvmStatic fun phone(): String? {
+        return sharedPrefs?.getString("RETAILER_PHONE", null)
+    }
+    @JvmStatic fun setPhone(value : String?) {
+        val editor = sharedPrefs?.edit()
+        if (value.isNil) { editor?.remove("RETAILER_PHONE") }
+        else {
+            editor?.putString("RETAILER_PHONE", value)
+        }
+        editor?.apply()
+    }
+    @JvmStatic fun address(): String? {
+        return sharedPrefs?.getString("RETAILER_ADDRESS", null)
+    }
+    @JvmStatic fun setAddress(value : String?) {
+        val editor = sharedPrefs?.edit()
+        if (value.isNil) { editor?.remove("RETAILER_ADDRESS") }
+        else {
+            editor?.putString("RETAILER_ADDRESS", value)
+        }
+        editor?.apply()
+    }
 
 }
