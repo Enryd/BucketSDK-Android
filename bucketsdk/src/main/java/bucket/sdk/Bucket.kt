@@ -3,6 +3,7 @@ package bucket.sdk
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.util.Log.e
 import bucket.sdk.callbacks.*
 import bucket.sdk.models.*
@@ -163,18 +164,18 @@ class Bucket {
                     }
                     is Result.Success -> {
                         val responseJson = result.value.obj()
-                        val apiKey = responseJson.getString("apiKey")
-                        val isApproved = responseJson.getBoolean("isApproved")
-                        val name = responseJson.getString("retailerName")
-                        val phone = responseJson.getString("retailerPhone")
+                        val apiKey = responseJson.optString("apiKey", "")
+                        val isApproved = responseJson.optBoolean("isApproved", false)
+                        val name = responseJson.optString("retailerName", "")
+                        val phone = responseJson.optString("retailerPhone", "")
                         // address assemble
                         val addressObject = responseJson.getJSONObject("address")
-                        val address1 = addressObject.getString("address1")
-                        val address2 = addressObject.getString("address2")
-                        val address3 = addressObject.getString("address3")
-                        val postalCode = addressObject.getString("postalCode")
-                        val city = addressObject.getString("city")
-                        val state = addressObject.getString("state")
+                        val address1 = addressObject.optString("address1", "")
+                        val address2 = addressObject.optString("address2", "")
+                        val address3 = addressObject.optString("address3", "")
+                        val postalCode = addressObject.optString("postalCode", "")
+                        val city = addressObject.optString("city", "")
+                        val state = addressObject.optString("state", "")
                         var address = ""
                         if (address1 != null) address += "$address1\n"
                         if (address2 != null) address += "$address2\n"

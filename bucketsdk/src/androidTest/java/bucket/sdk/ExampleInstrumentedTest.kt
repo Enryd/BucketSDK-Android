@@ -1,6 +1,5 @@
 package bucket.sdk
 
-
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import android.util.Log
@@ -36,7 +35,8 @@ class ExampleInstrumentedTest {
 
         Bucket.appContext = InstrumentationRegistry.getTargetContext()
         Bucket.environment = DeploymentEnvironment.Development
-
+        Credentials.setName("asd")
+        Log.e("name", "${Credentials.name()}")
         Credentials.setRetailerCode("BCKT-1")
         // Get the client id & client secret for this retailer:
         Bucket.registerTerminal("US", object : RegisterTerminal {
