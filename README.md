@@ -1,4 +1,4 @@
-[![](https://jitpack.io/v/buckettech/BucketSDK-Android.svg)](https://jitpack.io/#buckettech/BucketSDK-Android)
+[![](https://jitpack.io/v/Enryd/BucketSDK-Android.svg)](https://jitpack.io/#Enryd/BucketSDK-Android)
 
 # BucketSDK-Android
 This is the BucketSDK for Android.  Here is where you can create transactions & other important features of the Bucket API pre-wrapped for Android.
