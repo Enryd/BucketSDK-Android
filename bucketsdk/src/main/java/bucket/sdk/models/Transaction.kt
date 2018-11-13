@@ -183,7 +183,7 @@ class Transaction(var amount: Double, var totalTransactionAmount: Double, var em
     }
 
     @SuppressLint("CheckResult")
-    fun create(callback: CreateTransaction?) {
+    fun create(employeeId: String? = null, callback: CreateTransaction?) {
 
         // Get the client id & client secret for this retailer:
         val retailerCode = Credentials.retailerCode()
@@ -211,6 +211,7 @@ class Transaction(var amount: Double, var totalTransactionAmount: Double, var em
                 .header(Pair("retailerId", retailerCode!!))
                 .header(Pair("countryId", countryCode!!))
                 .header(Pair("terminalId", Build.SERIAL))
+                .header(Pair("employeeId", employeeId ?: ""))
                 .body(jsonBody.toString()).responseJson {
                     request, response, result ->
                     Log.d("bucket.sdk REQUEST: ", request.toString())

@@ -154,7 +154,11 @@ class Bucket {
 
             val theURL = environment.registerTerminal.build().toString()
 
-            theURL.httpPost().body(json.toString()).header(Pair("retailerId", retailerCode!!)).header(Pair("countryId", countryCode)).responseJson {
+            theURL.httpPost()
+                    .body(json.toString())
+                    .header(Pair("retailerId", retailerCode!!))
+                    .header(Pair("countryId", countryCode))
+                    .responseJson {
                 _, response, result ->
 
                 when (result) {
