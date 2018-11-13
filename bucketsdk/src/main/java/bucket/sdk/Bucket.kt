@@ -185,11 +185,19 @@ class Bucket {
                         if (postalCode != null) address += ", $postalCode"
 
                         // Set the terminal credentials:
-                        Credentials.setCountryCode(countryCode)
-                        Credentials.setTerminalSecret(apiKey)
-                        Credentials.setAddress(address)
-                        Credentials.setName(name)
-                        Credentials.setPhone(phone)
+                        Credentials.apply {
+                            setCountryCode(countryCode)
+                            setTerminalSecret(apiKey)
+                            setAddress1(address1)
+                            setAddress2(address2)
+                            setAddress3(address3)
+                            setPostalCode(postalCode)
+                            setCity(city)
+                            setState(state)
+                            setAddress(address)
+                            setPhone(phone)
+                            setName(name)
+                        }
                         callback?.success(isApproved)
                     }
                 }

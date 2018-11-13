@@ -60,7 +60,7 @@ class ExampleInstrumentedTest {
             setCountryCode("US")
         }
 
-        val transaction = Transaction("RandomTransactionId", 0.54, 7.89)
+        val transaction = Transaction(0.54, 7.89)
         transaction.create(object : CreateTransaction {
             override fun transactionCreated() {
                 assert(true)
@@ -77,7 +77,7 @@ class ExampleInstrumentedTest {
 
         Bucket.appContext = InstrumentationRegistry.getTargetContext()
 
-        val transaction = Transaction("RandomTransactionId", 0.54, 7.89)
+        val transaction = Transaction(0.54, 7.89)
         transaction.customerCode = "us.eDZ9LBdvununS"
 
         transaction.delete(object : DeleteTransaction {

@@ -76,5 +76,71 @@ object Credentials {
         }
         editor?.apply()
     }
+    @JvmStatic fun address1(): String? {
+        return sharedPrefs?.getString("RETAILER_ADDRESS1", null)
+    }
+    @JvmStatic fun setAddress1(value : String?) {
+        val editor = sharedPrefs?.edit()
+        if (value.isNil) { editor?.remove("RETAILER_ADDRESS1") }
+        else {
+            editor?.putString("RETAILER_ADDRESS1", value)
+        }
+        editor?.apply()
+    }
+    @JvmStatic fun address2(): String? {
+        return sharedPrefs?.getString("RETAILER_ADDRESS2", null)
+    }
+    @JvmStatic fun setAddress2(value : String?) {
+        val editor = sharedPrefs?.edit()
+        if (value.isNil) { editor?.remove("RETAILER_ADDRESS2") }
+        else {
+            editor?.putString("RETAILER_ADDRESS2", value)
+        }
+        editor?.apply()
+    }
+    @JvmStatic fun address3(): String? {
+        return sharedPrefs?.getString("RETAILER_ADDRESS3", null)
+    }
+    @JvmStatic fun setAddress3(value : String?) {
+        val editor = sharedPrefs?.edit()
+        if (value.isNil) { editor?.remove("RETAILER_ADDRESS3") }
+        else {
+            editor?.putString("RETAILER_ADDRESS3", value)
+        }
+        editor?.apply()
+    }
+    @JvmStatic fun city(): String? {
+        return sharedPrefs?.getString("RETAILER_CITY", null)
+    }
+    @JvmStatic fun setCity(value : String?) {
+        val editor = sharedPrefs?.edit()
+        if (value.isNil) { editor?.remove("RETAILER_CITY") }
+        else {
+            editor?.putString("RETAILER_CITY", value)
+        }
+        editor?.apply()
+    }
+    @JvmStatic fun state(): String? {
+        return sharedPrefs?.getString("RETAILER_STATE", null)
+    }
+    @JvmStatic fun setState(value : String?) {
+        val editor = sharedPrefs?.edit()
+        if (value.isNil) { editor?.remove("RETAILER_STATE") }
+        else {
+            editor?.putString("RETAILER_STATE", value)
+        }
+        editor?.apply()
+    }
+    @JvmStatic fun postalCode(): String? {
+        return sharedPrefs?.getString("RETAILER_POSTAL_CODE", null)
+    }
+    @JvmStatic fun setPostalCode(value : String?) {
+        val editor = sharedPrefs?.edit()
+        if (value.isNil) { editor?.remove("RETAILER_POSTAL_CODE") }
+        else {
+            editor?.putString("RETAILER_POSTAL_CODE", value)
+        }
+        editor?.apply()
+    }
 
 }

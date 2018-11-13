@@ -17,7 +17,7 @@ import com.github.kittinunf.result.Result
 import org.json.JSONObject
 import java.net.URL
 
-class Transaction(var clientTransactionId: String, var amount: Double, var totalTransactionAmount: Double? = null) {
+class Transaction(var amount: Double, var totalTransactionAmount: Double, var employeeId: String? = null, var clientTransactionId: String? = null) {
 
     // This is the primary key for the transaction in our db, as annotated:
     @PrimaryKey var bucketTransactionId : String? = null
