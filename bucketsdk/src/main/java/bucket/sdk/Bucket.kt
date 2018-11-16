@@ -222,7 +222,7 @@ class Bucket {
                     }
         }
 
-        @JvmStatic fun reporting(startTime: Int, endTime: Int, employeeId: String = "", terminalId: String?, callback: Reporting?) {
+        @JvmStatic fun reporting(startTime: String, endTime: String, employeeId: String = "", terminalId: String?, callback: Reporting?) {
 
             val url = Bucket.environment.report.build().toString()
 
