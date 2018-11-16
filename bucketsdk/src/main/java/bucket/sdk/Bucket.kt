@@ -4,16 +4,16 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.util.Log
-import android.util.Log.e
+import bucket.sdk.cache.Preferences
 import bucket.sdk.callbacks.*
 import bucket.sdk.models.*
 import bucket.sdk.extensions.bucketError
-import bucket.sdk.retrofit.BucketService
+import bucket.sdk.models.responses.ReportTransaction
 import com.github.kittinunf.fuel.android.extension.responseJson
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
 import org.json.JSONObject
-import java.util.*
+import kotlin.collections.ArrayList
 
 class Bucket {
 
@@ -22,7 +22,16 @@ class Bucket {
         @JvmStatic var appContext : Context? = null
 
         @JvmStatic var environment = DeploymentEnvironment.Development
-        @JvmStatic private var denoms : List<Double> = listOf(100.00, 50.00, 20.00, 10.00, 5.00, 2.00, 1.00)
+//        @JvmStatic private var denoms : List<Double> = listOf(100.00, 50.00, 20.00, 10.00, 5.00, 2.00, 1.00)
+        @JvmStatic private var denoms = listOf<Double>()
+            get() {
+                val billsList = mutableListOf<Double>()
+                for (double in Preferences.billDenoms.split(",")) {
+                    billsList.add(double.toDouble())
+                }
+                return billsList
+            }
+
         @JvmStatic private var usesNaturalChangeFunction : Boolean
             get() { return Credentials.sharedPrefs?.getBoolean("USES_NATURAL_CHANGE", false) ?: false }
             set(value) {
@@ -85,7 +94,12 @@ class Bucket {
                             for (i in 0..(it.length()-1)) {
                                 theDenoms[i] = it.getDouble(i)
                             }
-                            Bucket.denoms = theDenoms
+                            var billsString = ""
+                            for (bill in theDenoms) {
+                                billsString += if (billsString.isBlank()) bill else ",$bill"
+                            }
+                            Preferences.billDenoms = billsString
+//                            Bucket.denoms = theDenoms
                         }
                         callback?.setBillDenoms()
                     }
@@ -122,7 +136,7 @@ class Bucket {
         }
 
         @SuppressLint("CheckResult")
-        @JvmStatic fun registerTerminal(countryCode : String, callback: RegisterTerminal?) {
+        @JvmStatic fun registerTerminal(countryCode: String, callback: RegisterTerminal?) {
 
             val retailerCode = Credentials.retailerCode()
 
@@ -158,54 +172,108 @@ class Bucket {
                     .body(json.toString())
                     .header(Pair("retailerId", retailerCode!!))
                     .header(Pair("countryId", countryCode))
-                    .responseJson {
-                _, response, result ->
+                    .responseJson { _, response, result ->
 
-                when (result) {
-                    is Result.Failure -> {
-                        val error = response.bucketError
-                        callback?.didError(error)
-                    }
-                    is Result.Success -> {
-                        val responseJson = result.value.obj()
-                        val apiKey = responseJson.optString("apiKey", "")
-                        val isApproved = responseJson.optBoolean("isApproved", false)
-                        val name = responseJson.optString("retailerName", "")
-                        val phone = responseJson.optString("retailerPhone", "")
-                        // address assemble
-                        val addressObject = responseJson.optJSONObject("address") ?: null
-                        val address1 = addressObject?.optString("address1", "") ?: ""
-                        val address2 = addressObject?.optString("address2", "") ?: ""
-                        val address3 = addressObject?.optString("address3", "") ?: ""
-                        val postalCode = addressObject?.optString("postalCode", "") ?: ""
-                        val city = addressObject?.optString("city", "") ?: ""
-                        val state = addressObject?.optString("state", "") ?: ""
-                        var address = ""
-                        if (address1 != null) address += "$address1\n"
-                        if (address2 != null) address += "$address2\n"
-                        if (address3 != null) address += "$address3\n"
-                        if (city != null) address += city
-                        if (state != null) address += ", $state"
-                        if (postalCode != null) address += ", $postalCode"
+                        when (result) {
+                            is Result.Failure -> {
+                                val error = response.bucketError
+                                callback?.didError(error)
+                            }
+                            is Result.Success -> {
+                                Log.e("response", response.toString())
+                                val responseJson = result.value.obj()
+                                val apiKey = responseJson.optString("apiKey", "")
+                                val isApproved = responseJson.optBoolean("isApproved", false)
+                                val name = responseJson.optString("retailerName", "")
+                                val phone = responseJson.optString("retailerPhone", "")
+                                // address assemble
+                                val addressObject = responseJson.optJSONObject("address") ?: null
+                                val address1 = addressObject?.optString("address1", "") ?: ""
+                                val address2 = addressObject?.optString("address2", "") ?: ""
+                                val address3 = addressObject?.optString("address3", "") ?: ""
+                                val postalCode = addressObject?.optString("postalCode", null)
+                                val city = addressObject?.optString("city", "") ?: ""
+                                val state = addressObject?.optString("state", "") ?: ""
+                                var address = ""
+                                if (address1 != null) address += "$address1\n"
+                                if (address2 != null) address += "$address2\n"
+                                if (address3 != null) address += "$address3\n"
+                                if (city != null) address += city
+                                if (state != null) address += ", $state"
+                                if (postalCode != null) address += ", $postalCode"
 
-                        // Set the terminal credentials:
-                        Credentials.apply {
-                            setCountryCode(countryCode)
-                            setTerminalSecret(apiKey)
-                            setAddress1(address1)
-                            setAddress2(address2)
-                            setAddress3(address3)
-                            setPostalCode(postalCode)
-                            setCity(city)
-                            setState(state)
-                            setAddress(address)
-                            setPhone(phone)
-                            setName(name)
+                                // Set the terminal credentials:
+                                Credentials.apply {
+                                    setCountryCode(countryCode)
+                                    setTerminalSecret(apiKey)
+                                    setAddress1(address1)
+                                    setAddress2(address2)
+                                    setAddress3(address3)
+                                    setPostalCode(postalCode)
+                                    setCity(city)
+                                    setState(state)
+                                    setAddress(address)
+                                    setPhone(phone)
+                                    setName(name)
+                                }
+                                callback?.success(isApproved)
+                            }
                         }
-                        callback?.success(isApproved)
                     }
-                }
-            }
         }
+
+        @JvmStatic fun reporting(startTime: Int, endTime: Int, employeeId: String = "", terminalId: String?, callback: Reporting?) {
+
+            val url = Bucket.environment.report.build().toString()
+
+            val jsonObject = JSONObject()
+
+            jsonObject.put("start", startTime)
+            jsonObject.put("end", endTime)
+            if (!terminalId.isNullOrEmpty()) jsonObject.put("terminalId", terminalId)
+
+            url.httpPost()
+                    .header(Pair("x-functions-key", Credentials.terminalSecret()!!))
+                    .header(Pair("retailerId", Credentials.retailerCode()!!))
+                    .header(Pair("countryId", Credentials.countryCode()!!))
+                    .header(Pair("employeeId", employeeId))
+                    .body(jsonObject.toString()).responseJson {
+                        request, response, result ->
+                        Log.d("bucket.sdk REQUEST: ", request.toString())
+                        when (result) {
+                            is Result.Success -> {
+                                val responseObj = result.value.obj()
+                                val bucketTotal = responseObj.optDouble("bucketTotal")
+                                val transactionsArray = responseObj.optJSONArray("transactions")
+                                val transactionsList = ArrayList<ReportTransaction>()
+                                for (i in 0 until transactionsArray.length()) {
+                                    val transactionObject = transactionsArray.getJSONObject(i)
+                                    with(transactionObject) {
+                                        transactionsList.add(
+                                                ReportTransaction(
+                                                        bucketTransactionId = optInt("bucketTransactionId"),
+                                                        created = optString("created"),
+                                                        amount = optDouble("amount"),
+                                                        totalTransactionAmount = optDouble("totalTransactionAmount"),
+                                                        customerCode = optString("customerCode"),
+                                                        disputed = optString("disputed"),
+                                                        disputedBy = optString("disputedBy"),
+                                                        locationId = optString("locationId"),
+                                                        clientTransactionId = optString("clientTransactionId"),
+                                                        terminalId = optString("terminalId")))
+                                    }
+                                }
+
+                                callback?.success(bucketTotal, transactionsList)
+                            }
+                            is Result.Failure -> {
+                                callback?.didError(response.bucketError)
+                            }
+                        }
+                    }
+        }
+
     }
+
+
 }

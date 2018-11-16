@@ -2,6 +2,7 @@ package bucket.sdk.models
 
 // Bucket Packages:
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.os.Build
 import android.util.Log
 import bucket.sdk.*
@@ -14,10 +15,14 @@ import com.github.kittinunf.fuel.android.extension.responseJson
 import com.github.kittinunf.fuel.httpDelete
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.WriterException
+import com.journeyapps.barcodescanner.BarcodeEncoder
 import org.json.JSONObject
 import java.net.URL
 
-class Transaction(var amount: Double, var totalTransactionAmount: Double, var employeeId: String? = null, var clientTransactionId: String? = null) {
+class Transaction(var amount: Double, var totalTransactionAmount: Double?, var employeeId: String? = null, var clientTransactionId: String? = null) {
 
     // This is the primary key for the transaction in our db, as annotated:
     @PrimaryKey var bucketTransactionId : String? = null
@@ -183,7 +188,7 @@ class Transaction(var amount: Double, var totalTransactionAmount: Double, var em
     }
 
     @SuppressLint("CheckResult")
-    fun create(employeeId: String? = null, callback: CreateTransaction?) {
+    fun create(callback: CreateTransaction?) {
 
         // Get the client id & client secret for this retailer:
         val retailerCode = Credentials.retailerCode()
@@ -245,6 +250,19 @@ class Transaction(var amount: Double, var totalTransactionAmount: Double, var em
 //                    }
 //                }
 
+    }
+
+    fun getQRCodeBitmapImage(): Bitmap? {
+        val multiFormatWriter = MultiFormatWriter()
+        var bitmap: Bitmap? = null
+        try {
+            val bitMatrix = multiFormatWriter.encode(qrCodeContent.toString(), BarcodeFormat.QR_CODE, 200, 200)
+            bitmap = BarcodeEncoder().createBitmap(bitMatrix)
+
+        } catch (e: WriterException) {
+            e.printStackTrace()
+        }
+        return bitmap
     }
 
 }

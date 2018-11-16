@@ -28,6 +28,8 @@ class ExampleInstrumentedTest {
 
         val appContext = InstrumentationRegistry.getTargetContext()
 
+        Log.e("bucketAmount", "${Bucket.bucketAmount(10.53)}")
+
         assertEquals("bucket.sdk.test", appContext.packageName)
     }
 
@@ -61,11 +63,10 @@ class ExampleInstrumentedTest {
         }
 
         val transaction = Transaction(0.54, 7.89)
-        transaction.create(object : CreateTransaction {
+        transaction.create(callback = object : CreateTransaction {
             override fun transactionCreated() {
                 assert(true)
             }
-
             override fun didError(error: Error) {
                 assertTrue(error.message ?: "", false)
             }

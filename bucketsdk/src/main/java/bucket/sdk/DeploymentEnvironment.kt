@@ -46,4 +46,8 @@ enum class DeploymentEnvironment {
         get() = bucketBaseUri().appendPath("billDenoms")
         private set(value) {}
 
+    var report : Uri.Builder
+        get() = bucketBaseUri().appendPath("report")
+        private set(value) {}
+
 }
