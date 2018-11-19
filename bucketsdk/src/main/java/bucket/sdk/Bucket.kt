@@ -222,6 +222,10 @@ class Bucket {
                     }
         }
 
+        /**
+         * [startTime] This date is formatted as 'yyyy-MM-dd HH:mm:ssZZZ'
+         * [endTime] This date is formatted as 'yyyy-MM-dd HH:mm:ssZZZ'
+         **/
         @JvmStatic fun reporting(startTime: String, endTime: String, employeeId: String = "", terminalId: String?, callback: Reporting?) {
 
             val url = Bucket.environment.report.build().toString()
@@ -230,6 +234,114 @@ class Bucket {
 
             jsonObject.put("start", startTime)
             jsonObject.put("end", endTime)
+            if (!terminalId.isNullOrEmpty()) jsonObject.put("terminalId", terminalId)
+
+            url.httpPost()
+                    .header(Pair("x-functions-key", Credentials.terminalSecret()!!))
+                    .header(Pair("retailerId", Credentials.retailerCode()!!))
+                    .header(Pair("countryId", Credentials.countryCode()!!))
+                    .header(Pair("employeeId", employeeId))
+                    .body(jsonObject.toString()).responseJson {
+                        request, response, result ->
+                        Log.d("bucket.sdk REQUEST: ", request.toString())
+                        when (result) {
+                            is Result.Success -> {
+                                val responseObj = result.value.obj()
+                                val bucketTotal = responseObj.optDouble("bucketTotal")
+                                val transactionsArray = responseObj.optJSONArray("transactions")
+                                val transactionsList = ArrayList<ReportTransaction>()
+                                for (i in 0 until transactionsArray.length()) {
+                                    val transactionObject = transactionsArray.getJSONObject(i)
+                                    with(transactionObject) {
+                                        transactionsList.add(
+                                                ReportTransaction(
+                                                        bucketTransactionId = optInt("bucketTransactionId"),
+                                                        created = optString("created"),
+                                                        amount = optDouble("amount"),
+                                                        totalTransactionAmount = optDouble("totalTransactionAmount"),
+                                                        customerCode = optString("customerCode"),
+                                                        disputed = optString("disputed"),
+                                                        disputedBy = optString("disputedBy"),
+                                                        locationId = optString("locationId"),
+                                                        clientTransactionId = optString("clientTransactionId"),
+                                                        terminalId = optString("terminalId")))
+                                    }
+                                }
+
+                                callback?.success(bucketTotal, transactionsList)
+                            }
+                            is Result.Failure -> {
+                                callback?.didError(response.bucketError)
+                            }
+                        }
+                    }
+        }
+
+        /**
+         * [startTime] This is the starting epoch integer that is UTC based.
+         * [endTime] This is the ending epoch integer that is UTC based.
+         **/
+        @JvmStatic fun reporting(startTime: Int, endTime: Int, employeeId: String = "", terminalId: String?, callback: Reporting?) {
+
+            val url = Bucket.environment.report.build().toString()
+
+            val jsonObject = JSONObject()
+
+            jsonObject.put("start", startTime)
+            jsonObject.put("end", endTime)
+            if (!terminalId.isNullOrEmpty()) jsonObject.put("terminalId", terminalId)
+
+            url.httpPost()
+                    .header(Pair("x-functions-key", Credentials.terminalSecret()!!))
+                    .header(Pair("retailerId", Credentials.retailerCode()!!))
+                    .header(Pair("countryId", Credentials.countryCode()!!))
+                    .header(Pair("employeeId", employeeId))
+                    .body(jsonObject.toString()).responseJson {
+                        request, response, result ->
+                        Log.d("bucket.sdk REQUEST: ", request.toString())
+                        when (result) {
+                            is Result.Success -> {
+                                val responseObj = result.value.obj()
+                                val bucketTotal = responseObj.optDouble("bucketTotal")
+                                val transactionsArray = responseObj.optJSONArray("transactions")
+                                val transactionsList = ArrayList<ReportTransaction>()
+                                for (i in 0 until transactionsArray.length()) {
+                                    val transactionObject = transactionsArray.getJSONObject(i)
+                                    with(transactionObject) {
+                                        transactionsList.add(
+                                                ReportTransaction(
+                                                        bucketTransactionId = optInt("bucketTransactionId"),
+                                                        created = optString("created"),
+                                                        amount = optDouble("amount"),
+                                                        totalTransactionAmount = optDouble("totalTransactionAmount"),
+                                                        customerCode = optString("customerCode"),
+                                                        disputed = optString("disputed"),
+                                                        disputedBy = optString("disputedBy"),
+                                                        locationId = optString("locationId"),
+                                                        clientTransactionId = optString("clientTransactionId"),
+                                                        terminalId = optString("terminalId")))
+                                    }
+                                }
+
+                                callback?.success(bucketTotal, transactionsList)
+                            }
+                            is Result.Failure -> {
+                                callback?.didError(response.bucketError)
+                            }
+                        }
+                    }
+        }
+
+        /**
+         * [day] This is formatted as 'yyyy-MM-dd'. This covers starting from 12AM that day to 11:59:59PM that day.
+         **/
+        @JvmStatic fun reporting(day: String, employeeId: String = "", terminalId: String?, callback: Reporting?) {
+
+            val url = Bucket.environment.report.build().toString()
+
+            val jsonObject = JSONObject()
+
+            jsonObject.put("day", day)
             if (!terminalId.isNullOrEmpty()) jsonObject.put("terminalId", terminalId)
 
             url.httpPost()
