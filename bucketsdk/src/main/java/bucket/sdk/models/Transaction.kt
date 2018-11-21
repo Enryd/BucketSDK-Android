@@ -97,8 +97,7 @@ class Transaction(var amount: Double, var totalTransactionAmount: Double?, var e
                     .header(Pair("x-functions-key", terminalSecret!!))
                     .header(Pair("retailerId", retailerCode!!))
                     .header(Pair("countryId", countryCode!!))
-                    .header(Pair("terminalId", Build.SERIAL)).responseJson {
-                        _, response, result ->
+                    .header(Pair("terminalId", Build.SERIAL)).responseJson { _, response, result ->
                         when (result) {
                             is Result.Success -> {
                                 callback?.transactionDeleted()

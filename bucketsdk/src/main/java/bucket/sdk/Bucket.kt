@@ -90,15 +90,21 @@ class Bucket {
                         usesNaturalChangeFunction = responseJson.optBoolean("usesNaturalChangeFunction", false)
                         denominations?.let {
                             // Create our list of denominations:
-                            val theDenoms : MutableList<Double> = ArrayList()
-                            for (i in 0..(it.length()-1)) {
-                                theDenoms[i] = it.getDouble(i)
+                            try {
+                                val theDenoms : MutableList<Double> = ArrayList()
+                                for (i in 0..(it.length()-1)) {
+                                    theDenoms[i] = it.getDouble(i)
+                                }
+                                var billsString = ""
+                                for (bill in theDenoms) {
+                                    billsString += if (billsString.isBlank()) bill else ",$bill"
+                                }
+                                Preferences.billDenoms = billsString
+
+                            } catch (e: Exception) {
+
                             }
-                            var billsString = ""
-                            for (bill in theDenoms) {
-                                billsString += if (billsString.isBlank()) bill else ",$bill"
-                            }
-                            Preferences.billDenoms = billsString
+
 //                            Bucket.denoms = theDenoms
                         }
                         callback?.setBillDenoms()
