@@ -13,8 +13,6 @@ import bucket.sdk.v2.Callback
 import bucket.sdk.v2.cache.Credentials
 import bucket.sdk.v2.json.transaction.CreateTransactionResponse
 import bucket.sdk.v2.json.transaction.TransactionBody
-import bucket.sdk.v2.service.BucketRepositoryImpl
-import bucket.sdk.v2.service.BucketService
 import com.pawegio.kandroid.e
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -29,12 +27,14 @@ import org.junit.Assert.*
 @RunWith(AndroidJUnit4::class)
 class ExampleInstrumentedTest {
 
-    private lateinit var customerCode: String
+    private var customerCode: String = ""
+    private var terminalSecret: String = ""
 
     private fun setupTerminal() {
         Bucket.appContext = InstrumentationRegistry.getTargetContext()
         Credentials.retailerCode = "bckt-1"
         Credentials.country = "us"
+        Credentials.terminalSecret = terminalSecret
     }
 
     @Test fun useAppContext() {
@@ -47,6 +47,7 @@ class ExampleInstrumentedTest {
         Bucket.registerTerminal("bckt-1", "us", object : Callback.RegisterTerminal {
             override fun onSuccess() {
                 e("testRegisteringDevice - success")
+                terminalSecret = Credentials.terminalSecret ?: ""
                 assert(true)
             }
             override fun onError(error: String) {
@@ -90,6 +91,7 @@ class ExampleInstrumentedTest {
     }
 
     @Test fun testDeleteTransaction() {
+        setupTerminal()
         Bucket.deleteTransaction(customerCode, object : Callback.DeleteTransaction {
             override fun onSuccess(message: String) {
                 assertTrue(message.isNotBlank())
@@ -102,12 +104,9 @@ class ExampleInstrumentedTest {
     }
 
     @Test fun bucketAmount() {
-
-        val theAmountInt = 397
+        setupTerminal()
         val bucketAmount = Bucket.bucketAmount(7.69)
-
         assertTrue(bucketAmount == 0.6900000000000004)
-
     }
 //    @Test fun useAppContext() {
 //        // Context of the app under test.
