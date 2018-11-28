@@ -72,7 +72,7 @@ class Bucket {
                                         country: String,
                                         callback: Callback.RegisterTerminal) {
             // request
-            BucketRepositoryImpl(BucketService.retrofit).registerTerminal(RegisterTerminalBody(retailerCode), country)
+            BucketRepositoryImpl(BucketService.retrofit).registerTerminal(retailerCode, country)
                     .with(ApplicationSchedulerProvider())
                     .subscribe(
                             { callback.onSuccess() },

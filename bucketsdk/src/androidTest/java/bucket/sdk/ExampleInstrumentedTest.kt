@@ -69,6 +69,7 @@ class ExampleInstrumentedTest {
     }
 
     @Test fun testCreateTransaction() {
+        setupTerminal()
         val transactionBody = TransactionBody(4.2).apply {
             totalTransactionAmount = 9.23
             locationId = "there"

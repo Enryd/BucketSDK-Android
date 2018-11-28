@@ -1,5 +1,6 @@
 package bucket.sdk.v2.service
 
+import android.os.Build
 import bucket.sdk.v2.cache.Credentials
 import bucket.sdk.v2.cache.RetailerInfo
 import bucket.sdk.v2.cache.Terminal
@@ -22,7 +23,7 @@ import java.io.Serializable
  */
 interface BucketRepository : Serializable {
     /** device/terminal **/
-    fun registerTerminal(registerTerminalBody: RegisterTerminalBody, country: String): Completable
+    fun registerTerminal(retailerCode: String, country: String): Completable
     fun getBillDenominations(): Completable
 
     /** transactionBody **/
@@ -57,8 +58,8 @@ interface BucketRepository : Serializable {
 
 class BucketRepositoryImpl(private val bucketDataSource: BucketDataSource) : BucketRepository {
 
-    override fun registerTerminal(registerTerminalBody: RegisterTerminalBody, country: String): Completable {
-        return bucketDataSource.registerTerminal(registerTerminalBody, country = country)
+    override fun registerTerminal(retailerCode: String, country: String): Completable {
+        return bucketDataSource.registerTerminal(RegisterTerminalBody(Build.SERIAL), retailerCode, country)
                 .map { response ->
                     if (response.isSuccessful) {
                         with(response.body()) {
