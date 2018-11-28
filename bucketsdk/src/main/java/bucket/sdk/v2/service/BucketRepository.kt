@@ -22,7 +22,7 @@ import java.io.Serializable
  */
 interface BucketRepository : Serializable {
     /** device/terminal **/
-    fun registerTerminal(registerTerminalBody: RegisterTerminalBody): Completable
+    fun registerTerminal(registerTerminalBody: RegisterTerminalBody, country: String): Completable
     fun getBillDenominations(): Completable
 
     /** transactionBody **/
@@ -57,14 +57,18 @@ interface BucketRepository : Serializable {
 
 class BucketRepositoryImpl(private val bucketDataSource: BucketDataSource) : BucketRepository {
 
-    override fun registerTerminal(registerTerminalBody: RegisterTerminalBody): Completable {
-        return bucketDataSource.registerTerminal(registerTerminalBody)
+    override fun registerTerminal(registerTerminalBody: RegisterTerminalBody, country: String): Completable {
+        return bucketDataSource.registerTerminal(registerTerminalBody, country = country)
                 .map { response ->
                     if (response.isSuccessful) {
                         with(response.body()) {
                             // update cache
                             Terminal.isApproved = isApproved
-                            Credentials.terminalSecret = apiKey
+                            Credentials.apply {
+                                this.terminalSecret = apiKey
+                                this.retailerCode = retailerCode
+                                this.country = country
+                            }
                             RetailerInfo.apply {
                                 retailerName = this@with.retailerName
                                 retailerPhone = this@with.retailerPhone

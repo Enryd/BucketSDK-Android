@@ -2,9 +2,7 @@ package bucket.sdk.v2
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Build
 import bucket.sdk.cache.Preferences
-import bucket.sdk.v2.cache.Credentials
 import bucket.sdk.v2.cache.Terminal
 import bucket.sdk.v2.json.events.*
 import bucket.sdk.v2.json.reporting.ReportDateStringsBody
@@ -74,16 +72,10 @@ class Bucket {
                                         country: String,
                                         callback: Callback.RegisterTerminal) {
             // request
-            BucketRepositoryImpl(BucketService.retrofit).registerTerminal(registerTerminalBody = RegisterTerminalBody(Build.SERIAL))
+            BucketRepositoryImpl(BucketService.retrofit).registerTerminal(RegisterTerminalBody(retailerCode), country)
                     .with(ApplicationSchedulerProvider())
                     .subscribe(
-                            {
-                                Credentials.apply { // cache credentials
-                                    this.retailerCode = retailerCode
-                                    this.country = country
-                                }
-                                callback.onSuccess()
-                            },
+                            { callback.onSuccess() },
                             { error -> callback.onError(error.message.toString()) })
         }
 
