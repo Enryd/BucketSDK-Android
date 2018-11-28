@@ -38,18 +38,19 @@ class ExampleInstrumentedTest {
     }
 
     @Test fun useAppContext() {
-        val appContext = InstrumentationRegistry.getTargetContext()
         Bucket.appContext = InstrumentationRegistry.getTargetContext()
-        assertNull(bucket.sdk.v2.cache.Credentials.country)
+        assert(bucket.sdk.v2.cache.Credentials.country != null)
     }
 
     @Test fun testRegisteringDevice() {
         Bucket.appContext = InstrumentationRegistry.getTargetContext()
         Bucket.registerTerminal("bckt-1", "us", object : Callback.RegisterTerminal {
             override fun onSuccess() {
+                e("testRegisteringDevice - success")
                 assert(true)
             }
             override fun onError(error: String) {
+                e("testRegisteringDevice - failed")
                 assert(false)
             }
         })
