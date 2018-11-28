@@ -1,4 +1,4 @@
-package bucket.sdk.retrofit
+package bucket.sdk.v2.util
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

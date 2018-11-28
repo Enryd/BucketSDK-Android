@@ -10,6 +10,7 @@ import bucket.sdk.models.*
 import bucket.sdk.extensions.bucketError
 import bucket.sdk.models.responses.ReportTransaction
 import com.github.kittinunf.fuel.android.extension.responseJson
+import com.github.kittinunf.fuel.httpPatch
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
 import org.json.JSONObject
@@ -118,7 +119,7 @@ class Bucket {
 
 //            BucketService.retrofit.billDenominations(
 //                    terminalSecret = terminalSecret!!,
-//                    countryId = countryCode!!)
+//                    countryId = country!!)
 //                    .map { response ->
 //                        if (response.isSuccessful) {
 //                            val denominations = response.body().denominations
@@ -151,7 +152,7 @@ class Bucket {
             }
 
 //            BucketService.retrofit.registerTerminal(
-//                    countryId = countryCode,
+//                    countryId = country,
 //                    retailerId = retailerCode!!,
 //                    registerTerminalBody = RegisterTerminalBody(terminalId = Build.SERIAL))
 //                    .map { response ->
@@ -159,7 +160,7 @@ class Bucket {
 //                            val apiKey = response.body().apiKey
 //                            val isApproved = response.body().isApproved
 //                            // Set the terminal secret:
-//                            Credentials.setCountryCode(countryCode)
+//                            Credentials.setCountry(country)
 //                            Credentials.setTerminalSecret(apiKey)
 //                            callback?.success(isApproved)
 //
@@ -201,11 +202,11 @@ class Bucket {
                                 val city = addressObject?.optString("city", "") ?: ""
                                 val state = addressObject?.optString("state", "") ?: ""
                                 var address = ""
-                                if (address1 != null) address += "$address1\n"
-                                if (address2 != null) address += "$address2\n"
-                                if (address3 != null) address += "$address3\n"
-                                if (city != null) address += city
-                                if (state != null) address += ", $state"
+                                if (address1.isNotBlank()) address += "$address1\n"
+                                if (address2.isNotBlank()) address += "$address2\n"
+                                if (address3.isNotBlank()) address += "$address3\n"
+                                if (city.isNotBlank()) address += city
+                                if (state.isNotBlank()) address += ", $state"
                                 if (postalCode != null) address += ", $postalCode"
 
                                 // Set the terminal credentials:
@@ -231,8 +232,8 @@ class Bucket {
         /**
          * [startTime] This date is formatted as 'yyyy-MM-dd HH:mm:ssZZZ'
          * [endTime] This date is formatted as 'yyyy-MM-dd HH:mm:ssZZZ'
-         **/
-        @JvmStatic fun reporting(startTime: String, endTime: String, employeeId: String = "", terminalId: String?, callback: Reporting?) {
+         */
+        @JvmStatic fun reporting(startTime: String, endTime: String, employeeId: String = "", terminalId: String, callback: Reporting?) {
 
             val url = Bucket.environment.report.build().toString()
 
@@ -240,7 +241,7 @@ class Bucket {
 
             jsonObject.put("start", startTime)
             jsonObject.put("end", endTime)
-            if (!terminalId.isNullOrEmpty()) jsonObject.put("terminalId", terminalId)
+            if (!terminalId.isEmpty()) jsonObject.put("terminalId", terminalId)
 
             url.httpPost()
                     .header(Pair("x-functions-key", Credentials.terminalSecret()!!))
@@ -253,6 +254,7 @@ class Bucket {
                         when (result) {
                             is Result.Success -> {
                                 val responseObj = result.value.obj()
+                                Log.e("reporting", "$responseObj")
                                 val bucketTotal = responseObj.optDouble("bucketTotal")
                                 val transactionsArray = responseObj.optJSONArray("transactions")
                                 val transactionsList = ArrayList<ReportTransaction>()
@@ -286,7 +288,7 @@ class Bucket {
         /**
          * [startTime] This is the starting epoch integer that is UTC based.
          * [endTime] This is the ending epoch integer that is UTC based.
-         **/
+         */
         @JvmStatic fun reporting(startTime: Int, endTime: Int, employeeId: String = "", terminalId: String?, callback: Reporting?) {
 
             val url = Bucket.environment.report.build().toString()
@@ -308,6 +310,7 @@ class Bucket {
                         when (result) {
                             is Result.Success -> {
                                 val responseObj = result.value.obj()
+                                Log.e("reporting", "$responseObj")
                                 val bucketTotal = responseObj.optDouble("bucketTotal")
                                 val transactionsArray = responseObj.optJSONArray("transactions")
                                 val transactionsList = ArrayList<ReportTransaction>()
@@ -340,7 +343,7 @@ class Bucket {
 
         /**
          * [day] This is formatted as 'yyyy-MM-dd'. This covers starting from 12AM that day to 11:59:59PM that day.
-         **/
+         */
         @JvmStatic fun reporting(day: String, employeeId: String = "", terminalId: String?, callback: Reporting?) {
 
             val url = Bucket.environment.report.build().toString()
@@ -361,6 +364,7 @@ class Bucket {
                         when (result) {
                             is Result.Success -> {
                                 val responseObj = result.value.obj()
+                                Log.e("reporting", "$responseObj")
                                 val bucketTotal = responseObj.optDouble("bucketTotal")
                                 val transactionsArray = responseObj.optJSONArray("transactions")
                                 val transactionsList = ArrayList<ReportTransaction>()
@@ -383,6 +387,31 @@ class Bucket {
                                 }
 
                                 callback?.success(bucketTotal, transactionsList)
+                            }
+                            is Result.Failure -> {
+                                callback?.didError(response.bucketError)
+                            }
+                        }
+                    }
+        }
+
+        @JvmStatic fun refund(customerCode: String, terminalId: String?, callback: RefundTransaction?) {
+
+            val url = Bucket.environment.transaction.appendPath(customerCode).build().toString()
+
+            url.httpPatch()
+                    .header(Pair("x-functions-key", Credentials.terminalSecret()!!))
+                    .header(Pair("retailerCode", Credentials.retailerCode()!!))
+                    .header(Pair("terminalCode", Build.SERIAL))
+                    .header(Pair("country", Credentials.countryCode()!!)).responseJson {
+                        request, response, result ->
+                        Log.d("bucket.sdk REQUEST: ", request.toString())
+                        when (result) {
+                            is Result.Success -> {
+                                val responseObj = result.value.obj()
+                                Log.e("refund", "$responseObj")
+
+                                callback?.success(responseObj.optString("result"))
                             }
                             is Result.Failure -> {
                                 callback?.didError(response.bucketError)

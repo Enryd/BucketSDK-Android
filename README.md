@@ -68,7 +68,7 @@ val retailerSecret = Credentials.terminalSecret()
 SGD (Singapore) & USD (USA) currencies are currently supported.
 ```Java
 // Java:
-Credentials.setCountryCode("USD");
+Credentials.setCountry("USD");
 Bucket.fetchBillDenominations(new BillDenomination() {
     @Override public void setBillDenoms() {
         
@@ -81,7 +81,7 @@ Bucket.fetchBillDenominations(new BillDenomination() {
 
 ```kotlin
 // Kotlin:
-Credentials.setCountryCode("USD")
+Credentials.setCountry("USD")
 Bucket.fetchBillDenominations(object : BillDenomination() {
     override fun setBillDenoms() {
     
@@ -102,14 +102,14 @@ long bucketAmount = Bucket.bucketAmount(789);
 val bucketAmount = Bucket.bucketAmount(789)
 ```
 
-### Creating a transaction
-You will need to use the bucketAmount function to set the transaction amount here.
+### Creating a transactionBody
+You will need to use the bucketAmount function to set the transactionBody amount here.
 ```Java
 // Java:
 Transaction tr = new Transaction("XCFRTDSFGGOL", 0.60, 5.60);
 tr.create(new CreateTransaction() {
     @Override public void transactionCreated() {
-        // The transaction was successfully created!
+        // The transactionBody was successfully created!
     }
     @Override public void didError(VolleyError volleyError) {
         // There was an error.
@@ -118,10 +118,10 @@ tr.create(new CreateTransaction() {
 ```
 ```Kotlin
 // Kotlin:
-val transaction = Transaction("XCFRTDSFGGOL", 0.60, 5.60)
-transaction.create(object : CreateTransaction() {
+val transactionBody = Transaction("XCFRTDSFGGOL", 0.60, 5.60)
+transactionBody.create(object : CreateTransaction() {
     override fun transactionCreated() {
-        // Yay the transaction was successfully created.
+        // Yay the transactionBody was successfully created.
     }
     override fun didError(error: VolleyError?) {
         // Oh no - we had an error :(

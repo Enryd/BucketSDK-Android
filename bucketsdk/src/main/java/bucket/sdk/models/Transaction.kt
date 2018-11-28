@@ -9,8 +9,6 @@ import bucket.sdk.*
 import bucket.sdk.annotations.*
 import bucket.sdk.callbacks.*
 import bucket.sdk.extensions.*
-import bucket.sdk.models.responses.CreateTransactionResponse
-import bucket.sdk.retrofit.BucketService
 import com.github.kittinunf.fuel.android.extension.responseJson
 import com.github.kittinunf.fuel.httpDelete
 import com.github.kittinunf.fuel.httpPost
@@ -21,6 +19,7 @@ import com.google.zxing.WriterException
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import org.json.JSONObject
 import java.net.URL
+import javax.crypto.spec.SecretKeySpec
 
 class Transaction(var amount: Double, var totalTransactionAmount: Double?, var employeeId: String? = null, var clientTransactionId: String? = null) {
 
@@ -95,9 +94,9 @@ class Transaction(var amount: Double, var totalTransactionAmount: Double?, var e
 
             url.httpDelete()
                     .header(Pair("x-functions-key", terminalSecret!!))
-                    .header(Pair("retailerId", retailerCode!!))
+                    .header(Pair("retailerCode", retailerCode!!))
                     .header(Pair("countryId", countryCode!!))
-                    .header(Pair("terminalId", Build.SERIAL)).responseJson { _, response, result ->
+                    .header(Pair("terminalCode", Build.SERIAL)).responseJson { _, response, result ->
                         when (result) {
                             is Result.Success -> {
                                 callback?.transactionDeleted()
@@ -110,9 +109,9 @@ class Transaction(var amount: Double, var totalTransactionAmount: Double?, var e
 
 //            BucketService.retrofit.deleteTransaction(
 //                    terminalSecret = terminalSecret!!,
-//                    retailerId = retailerCode!!,
-//                    countryId = countryCode!!,
-//                    terminalId = Build.SERIAL,
+//                    retailerCode = retailerCode!!,
+//                    countryId = country!!,
+//                    terminalCode = Build.SERIAL,
 //                    customerCode = customerCode)
 //                    .map { response ->
 //                        if (response.isSuccessful) {
@@ -153,9 +152,9 @@ class Transaction(var amount: Double, var totalTransactionAmount: Double?, var e
 
         url.httpDelete()
                 .header(Pair("x-functions-key", terminalSecret!!))
-                .header(Pair("retailerId", retailerCode!!))
+                .header(Pair("retailerCode", retailerCode!!))
                 .header(Pair("countryId", countryCode!!))
-                .header(Pair("terminalId", Build.SERIAL)).responseJson {
+                .header(Pair("terminalCode", Build.SERIAL)).responseJson {
                     _, response, result ->
                     when (result) {
                         is Result.Success -> {
@@ -169,9 +168,9 @@ class Transaction(var amount: Double, var totalTransactionAmount: Double?, var e
 
 //        BucketService.retrofit.deleteTransaction(
 //                terminalSecret = terminalSecret!!,
-//                retailerId = retailerCode!!,
-//                countryId = countryCode!!,
-//                terminalId = Build.SERIAL,
+//                retailerCode = retailerCode!!,
+//                countryId = country!!,
+//                terminalCode = Build.SERIAL,
 //                customerCode = customerCode!!)
 //                .map { response ->
 //                    if (response.isSuccessful) {
@@ -212,9 +211,9 @@ class Transaction(var amount: Double, var totalTransactionAmount: Double?, var e
 
         url.httpPost()
                 .header(Pair("x-functions-key", terminalSecret!!))
-                .header(Pair("retailerId", retailerCode!!))
+                .header(Pair("retailerCode", retailerCode!!))
                 .header(Pair("countryId", countryCode!!))
-                .header(Pair("terminalId", Build.SERIAL))
+                .header(Pair("terminalCode", Build.SERIAL))
                 .header(Pair("employeeId", employeeId ?: ""))
                 .body(jsonBody.toString()).responseJson {
                     request, response, result ->
@@ -232,9 +231,9 @@ class Transaction(var amount: Double, var totalTransactionAmount: Double?, var e
 
 //        BucketService.retrofit.createTransaction(
 //                terminalSecret = terminalSecret!!,
-//                retailerId = retailerCode!!,
-//                countryId = countryCode!!,
-//                terminalId = Build.SERIAL,
+//                retailerCode = retailerCode!!,
+//                countryId = country!!,
+//                terminalCode = Build.SERIAL,
 //                transaction = this)
 //                .map { response ->
 //                    if (response.isSuccessful) {
@@ -251,7 +250,7 @@ class Transaction(var amount: Double, var totalTransactionAmount: Double?, var e
 
     }
 
-    fun getQRCodeBitmapImage(): Bitmap? {
+    fun generateQRCode(): Bitmap? {
         val multiFormatWriter = MultiFormatWriter()
         var bitmap: Bitmap? = null
         try {

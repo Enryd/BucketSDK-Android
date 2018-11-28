@@ -4,7 +4,7 @@ import android.net.Uri
 
 enum class DeploymentEnvironment {
 
-    // Cases: (Production & Development for now)
+    // Cases: (PRODUCTION & DEVELOPMENT for now)
     Production, Development, Staging;
 
     // Case URL Endpoint:
@@ -25,9 +25,9 @@ enum class DeploymentEnvironment {
 //    private fun bucketBaseUri() = Uri.Builder().apply {
 //        scheme(URI_SCHEME)
 //        authority(when(this@DeploymentEnvironment) {
-//            Production -> URI_AUTHORITY_PRODUCTION
-//            Development -> URI_AUTHORITY_DEVELOPMENT
-//            Staging -> URI_AUTHORITY_STAGING
+//            PRODUCTION -> URI_AUTHORITY_PRODUCTION
+//            DEVELOPMENT -> URI_AUTHORITY_DEVELOPMENT
+//            STAGING -> URI_AUTHORITY_STAGING
 //        })
 //        appendPath("api")
 //        appendPath(API_VERSION)
