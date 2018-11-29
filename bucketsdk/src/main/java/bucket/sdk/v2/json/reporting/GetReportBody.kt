@@ -2,7 +2,11 @@ package bucket.sdk.v2.json.reporting
 
 import java.io.Serializable
 
-interface GetReportBody : Serializable
+open class GetReportBody(
+        open val reportTerminalCode: String? = null,
+        open val employeeCode: String? = null,
+        open val employeeId: Int? = null)
+    : Serializable
 
 /**
  * @param start This date is formatted as 'yyyy-MM-dd HH:mm:ssZZZ'
@@ -18,10 +22,10 @@ interface GetReportBody : Serializable
 data class ReportDateStringsBody(
         val start: String,
         val end: String,
-        val reportTerminalCode: String?,
-        val employeeCode: String?,
-        val employeeId: Int?)
-    : GetReportBody
+        override val reportTerminalCode: String? = null,
+        override val employeeCode: String? = null,
+        override val employeeId: Int? = null)
+    : GetReportBody(reportTerminalCode, employeeCode, employeeId)
 
 /**
  * @param start This is the starting epoch integer in SECONDS that is UTC based.
@@ -37,10 +41,10 @@ data class ReportDateStringsBody(
 data class ReportEpochIntegersBody(
         val start: Int,
         val end: Int,
-        val reportTerminalCode: String?,
-        val employeeCode: String?,
-        val employeeId: Int?)
-    : GetReportBody
+        override val reportTerminalCode: String? = null,
+        override val employeeCode: String? = null,
+        override val employeeId: Int? = null)
+    : GetReportBody(reportTerminalCode, employeeCode, employeeId)
 
 /**
  * @param day This is formatted as 'yyyy-MM-dd'. This covers starting from 12AM that day to 11:59:59PM that day.
@@ -54,9 +58,9 @@ data class ReportEpochIntegersBody(
  */
 data class ReportDayStringBody(
         val day: String,
-        val reportTerminalCode: String?,
-        val employeeCode: String?,
-        val employeeId: Int?)
-    : GetReportBody
+        override val reportTerminalCode: String? = null,
+        override val employeeCode: String? = null,
+        override val employeeId: Int? = null)
+    : GetReportBody(reportTerminalCode, employeeCode, employeeId)
 
 
