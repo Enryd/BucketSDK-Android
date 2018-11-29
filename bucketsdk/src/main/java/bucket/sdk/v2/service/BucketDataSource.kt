@@ -12,6 +12,7 @@ import bucket.sdk.v2.json.transaction.TransactionBody
 import bucket.sdk.v2.json.transaction.CreateTransactionResponse
 import bucket.sdk.v2.json.transaction.DeleteTransactionResponse
 import bucket.sdk.v2.json.transaction.RefundTransactionResponse
+import com.google.gson.JsonObject
 import io.reactivex.Single
 import retrofit2.Response
 import retrofit2.http.*
@@ -66,9 +67,7 @@ interface BucketDataSource {
     /** REPORTING **/
 
     @POST("report")
-    fun getReport(@Body reportDateStringsBody: ReportDateStringsBody?,
-                  @Body reportEpochIntegersBody: ReportEpochIntegersBody?,
-                  @Body reportDayStringBody: ReportDayStringBody?,
+    fun getReport(@Body getReportBody: Any,
                   @Header("employeeCode") employeeCode: String? = null,
                   @Header("eventId") eventId: Int? = null,
                   @Query("offset") offset: Int? = null,

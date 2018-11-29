@@ -15,6 +15,7 @@ import bucket.sdk.v2.service.BucketService
 import bucket.sdk.v2.util.ext.with
 import bucket.sdk.v2.util.rx.ApplicationSchedulerProvider
 import com.chibatching.kotpref.Kotpref
+import com.google.gson.JsonObject
 import com.pawegio.kandroid.e
 
 class Bucket {
@@ -155,7 +156,7 @@ class Bucket {
         @JvmStatic fun getReport(getReportBody: ReportDateStringsBody,
                                  callback: Callback.GetReport) {
             // request
-            BucketRepositoryImpl(BucketService.retrofit).getReport(reportDateStringsBody = getReportBody)
+            BucketRepositoryImpl(BucketService.retrofit).getReport(getReportBody)
                     .with(ApplicationSchedulerProvider())
                     .subscribe(
                             { getReportResponse -> callback.onSuccess(getReportResponse)},
@@ -171,7 +172,7 @@ class Bucket {
         @JvmStatic fun getReport(getReportBody: ReportEpochIntegersBody,
                                  callback: Callback.GetReport) {
             // request
-            BucketRepositoryImpl(BucketService.retrofit).getReport(reportEpochIntegersBody = getReportBody)
+            BucketRepositoryImpl(BucketService.retrofit).getReport(getReportBody)
                     .with(ApplicationSchedulerProvider())
                     .subscribe(
                             { getReportResponse -> callback.onSuccess(getReportResponse)},
@@ -187,7 +188,7 @@ class Bucket {
         @JvmStatic fun getReport(getReportBody: ReportDayStringBody,
                                  callback: Callback.GetReport) {
             // request
-            BucketRepositoryImpl(BucketService.retrofit).getReport(reportDayStringBody = getReportBody)
+            BucketRepositoryImpl(BucketService.retrofit).getReport(getReportBody)
                     .with(ApplicationSchedulerProvider())
                     .subscribe(
                             { getReportResponse -> callback.onSuccess(getReportResponse)},

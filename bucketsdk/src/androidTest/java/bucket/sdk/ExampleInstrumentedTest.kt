@@ -13,6 +13,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import org.junit.Assert.*
+import org.junit.FixMethodOrder
+import org.junit.runners.MethodSorters
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -20,24 +22,18 @@ import org.junit.Assert.*
  * @see [Testing documentation](http://d.android.com/tools/testing)
  */
 @RunWith(AndroidJUnit4::class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class ExampleInstrumentedTest {
 
     private var customerCode: String = ""
 
-//    private fun setupTerminal() {
-//        Bucket.appContext = InstrumentationRegistry.getTargetContext()
-//        Credentials.retailerCode = "bckt-1"
-//        Credentials.country = "us"
-//        Credentials.terminalSecret = terminalSecret
-//    }
-
-    @Test fun testUseAppContext() {
+    @Test fun test1UseAppContext() {
         Bucket.appContext = InstrumentationRegistry.getTargetContext()
         assert(bucket.sdk.v2.cache.Credentials.country != null)
         Thread.sleep(5000)
     }
 
-    @Test fun testRegisteringDevice() {
+    @Test fun test2RegisteringDevice() {
         Bucket.registerTerminal("bckt-1", "us", object : Callback.RegisterTerminal {
             override fun onSuccess() {
                 e("testRegisteringDevice - success")
@@ -51,7 +47,7 @@ class ExampleInstrumentedTest {
         Thread.sleep(10000)
     }
 
-    @Test fun testGetBillDenominations() {
+    @Test fun test3GetBillDenominations() {
         Bucket.getBillDenominations(object : Callback.GetBillDenominations {
             override fun onSuccess() {
                 assert(true)
@@ -64,7 +60,7 @@ class ExampleInstrumentedTest {
         Thread.sleep(10000)
     }
 
-    @Test fun testCreateTransaction() {
+    @Test fun test4CreateTransaction() {
         val transactionBody = TransactionBody(4.2).apply {
             totalTransactionAmount = 9.23
             locationId = "there"
@@ -84,7 +80,7 @@ class ExampleInstrumentedTest {
         Thread.sleep(10000)
     }
 
-    @Test fun testDeleteTransaction() {
+    @Test fun test5DeleteTransaction() {
         Bucket.deleteTransaction(customerCode, object : Callback.DeleteTransaction {
             override fun onSuccess(message: String) {
                 assert(message.isNotBlank())
@@ -97,7 +93,7 @@ class ExampleInstrumentedTest {
         Thread.sleep(10000)
     }
 
-    @Test fun testGetReport() {
+    @Test fun test6GetReport() {
         val getReportBody = ReportDateStringsBody(
                 start = "2018-11-02 16:01:56+0800",
                 end = "2018-11-29 16:01:56+0800"
@@ -114,7 +110,7 @@ class ExampleInstrumentedTest {
         Thread.sleep(5000)
     }
 
-    @Test fun testBucketAmount() {
+    @Test fun test7BucketAmount() {
 //        setupTerminal()
         val bucketAmount = Bucket.bucketAmount(7.69)
         assert(bucketAmount == 0.6900000000000004)

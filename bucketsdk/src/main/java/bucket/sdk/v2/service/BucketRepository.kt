@@ -35,9 +35,7 @@ interface BucketRepository : Serializable {
 
     /** reporting **/
     fun getReport(
-            reportDateStringsBody: ReportDateStringsBody? = null,
-            reportEpochIntegersBody: ReportEpochIntegersBody? = null,
-            reportDayStringBody: ReportDayStringBody? = null,
+            getReportBody: Any,
             employeeCode: String? = null,
             eventId: Int? = null,
             offset: Int? = null,
@@ -143,17 +141,13 @@ class BucketRepositoryImpl(private val bucketDataSource: BucketDataSource) : Buc
                 }
     }
 
-    override fun getReport(reportDateStringsBody: ReportDateStringsBody?,
-                           reportEpochIntegersBody: ReportEpochIntegersBody?,
-                           reportDayStringBody: ReportDayStringBody?,
+    override fun getReport(getReportBody: Any,
                            employeeCode: String?,
                            eventId: Int?,
                            offset: Int?,
                            limit: Int?): Single<GetReportResponse> {
         return bucketDataSource.getReport(
-                reportDateStringsBody = reportDateStringsBody,
-                reportEpochIntegersBody = reportEpochIntegersBody,
-                reportDayStringBody = reportDayStringBody,
+                getReportBody = getReportBody,
                 employeeCode = employeeCode,
                 eventId = eventId,
                 offset = offset,
