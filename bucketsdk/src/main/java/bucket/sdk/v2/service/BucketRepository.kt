@@ -143,7 +143,12 @@ class BucketRepositoryImpl(private val bucketDataSource: BucketDataSource) : Buc
     }
 
     override fun getReport(getReportBody: GetReportBody, employeeCode: String?, eventId: Int?, offset: Int?, limit: Int?): Single<GetReportResponse> {
-        return bucketDataSource.getReport(getReportBody, employeeCode, eventId, offset, limit)
+        return bucketDataSource.getReport(
+                getReportBody = getReportBody,
+                employeeCode = employeeCode,
+                eventId = eventId,
+                offset = offset,
+                limit = limit)
                 .map { response ->
                     if (response.isSuccessful) response.body()
                     else throwResponseExceptionMessage(response as Response<*>)
