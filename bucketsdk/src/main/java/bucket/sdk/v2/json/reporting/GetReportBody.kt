@@ -2,11 +2,11 @@ package bucket.sdk.v2.json.reporting
 
 import java.io.Serializable
 
-open class GetReportBody(
-        open val reportTerminalCode: String? = null,
-        open val employeeCode: String? = null,
-        open val employeeId: Int? = null)
-    : Serializable
+abstract class GetReportBody : Serializable {
+    abstract val reportTerminalCode: String?
+    abstract val employeeCode: String?
+    abstract val employeeId: Int?
+}
 
 /**
  * @param start This date is formatted as 'yyyy-MM-dd HH:mm:ssZZZ'
@@ -25,7 +25,7 @@ data class ReportDateStringsBody(
         override val reportTerminalCode: String? = null,
         override val employeeCode: String? = null,
         override val employeeId: Int? = null)
-    : GetReportBody(reportTerminalCode, employeeCode, employeeId)
+    : GetReportBody()
 
 /**
  * @param start This is the starting epoch integer in SECONDS that is UTC based.
@@ -44,7 +44,7 @@ data class ReportEpochIntegersBody(
         override val reportTerminalCode: String? = null,
         override val employeeCode: String? = null,
         override val employeeId: Int? = null)
-    : GetReportBody(reportTerminalCode, employeeCode, employeeId)
+    : GetReportBody()
 
 /**
  * @param day This is formatted as 'yyyy-MM-dd'. This covers starting from 12AM that day to 11:59:59PM that day.
@@ -61,6 +61,6 @@ data class ReportDayStringBody(
         override val reportTerminalCode: String? = null,
         override val employeeCode: String? = null,
         override val employeeId: Int? = null)
-    : GetReportBody(reportTerminalCode, employeeCode, employeeId)
+    : GetReportBody()
 
 
