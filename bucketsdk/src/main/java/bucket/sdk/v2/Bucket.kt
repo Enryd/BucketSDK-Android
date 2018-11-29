@@ -155,7 +155,7 @@ class Bucket {
         @JvmStatic fun getReport(getReportBody: ReportDateStringsBody,
                                  callback: Callback.GetReport) {
             // request
-            BucketRepositoryImpl(BucketService.retrofit).getReport(getReportBody)
+            BucketRepositoryImpl(BucketService.retrofit).getReport(reportDateStringsBody = getReportBody)
                     .with(ApplicationSchedulerProvider())
                     .subscribe(
                             { getReportResponse -> callback.onSuccess(getReportResponse)},
@@ -171,7 +171,7 @@ class Bucket {
         @JvmStatic fun getReport(getReportBody: ReportEpochIntegersBody,
                                  callback: Callback.GetReport) {
             // request
-            BucketRepositoryImpl(BucketService.retrofit).getReport(getReportBody)
+            BucketRepositoryImpl(BucketService.retrofit).getReport(reportEpochIntegersBody = getReportBody)
                     .with(ApplicationSchedulerProvider())
                     .subscribe(
                             { getReportResponse -> callback.onSuccess(getReportResponse)},
@@ -187,7 +187,7 @@ class Bucket {
         @JvmStatic fun getReport(getReportBody: ReportDayStringBody,
                                  callback: Callback.GetReport) {
             // request
-            BucketRepositoryImpl(BucketService.retrofit).getReport(getReportBody)
+            BucketRepositoryImpl(BucketService.retrofit).getReport(reportDayStringBody = getReportBody)
                     .with(ApplicationSchedulerProvider())
                     .subscribe(
                             { getReportResponse -> callback.onSuccess(getReportResponse)},
@@ -202,18 +202,18 @@ class Bucket {
          * | that are returned in the events array. The maximum limit for this endpoint is 1000.
          * @param callback
          */
-        @SuppressLint("CheckResult")
-        @JvmStatic fun getEvents(getEventsBody: EventsDateStringsBody,
-                                 offset: Int? = null,
-                                 limit: Int? = null,
-                                 callback: Callback.GetEvents) {
-            // request
-            BucketRepositoryImpl(BucketService.retrofit).getEvents(getEventsBody, offset, limit)
-                    .with(ApplicationSchedulerProvider())
-                    .subscribe(
-                            { events -> callback.onSuccess(events)},
-                            { error -> callback.onError(error.message.toString()) })
-        }
+//        @SuppressLint("CheckResult")
+//        @JvmStatic fun getEvents(getEventsBody: EventsDateStringsBody,
+//                                 offset: Int? = null,
+//                                 limit: Int? = null,
+//                                 callback: Callback.GetEvents) {
+//            // request
+//            BucketRepositoryImpl(BucketService.retrofit).getEvents(getEventsBody, offset, limit)
+//                    .with(ApplicationSchedulerProvider())
+//                    .subscribe(
+//                            { events -> callback.onSuccess(events)},
+//                            { error -> callback.onError(error.message.toString()) })
+//        }
 
         /**
          * Get list of events with epoch integer range
@@ -223,18 +223,18 @@ class Bucket {
          * | that are returned in the events array. The maximum limit for this endpoint is 1000.
          * @param callback
          */
-        @SuppressLint("CheckResult")
-        @JvmStatic fun getEvents(getEventsBody: EventsEpochIntegersBody,
-                                 offset: Int? = null,
-                                 limit: Int? = null,
-                                 callback: Callback.GetEvents) {
-            // request
-            BucketRepositoryImpl(BucketService.retrofit).getEvents(getEventsBody, offset, limit)
-                    .with(ApplicationSchedulerProvider())
-                    .subscribe(
-                            { events -> callback.onSuccess(events)},
-                            { error -> callback.onError(error.message.toString()) })
-        }
+//        @SuppressLint("CheckResult")
+//        @JvmStatic fun getEvents(getEventsBody: EventsEpochIntegersBody,
+//                                 offset: Int? = null,
+//                                 limit: Int? = null,
+//                                 callback: Callback.GetEvents) {
+//            // request
+//            BucketRepositoryImpl(BucketService.retrofit).getEvents(getEventsBody, offset, limit)
+//                    .with(ApplicationSchedulerProvider())
+//                    .subscribe(
+//                            { events -> callback.onSuccess(events)},
+//                            { error -> callback.onError(error.message.toString()) })
+//        }
 
         /**
          * Get list of events with id

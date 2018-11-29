@@ -4,8 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import bucket.sdk.v2.cache.Credentials
 import bucket.sdk.v2.json.events.*
-import bucket.sdk.v2.json.reporting.GetReportBody
-import bucket.sdk.v2.json.reporting.GetReportResponse
+import bucket.sdk.v2.json.reporting.*
 import bucket.sdk.v2.json.terminal.RegisterTerminalBody
 import bucket.sdk.v2.json.terminal.GetBillDenominationsResponse
 import bucket.sdk.v2.json.terminal.RegisterTerminalResponse
@@ -67,7 +66,9 @@ interface BucketDataSource {
     /** REPORTING **/
 
     @POST("report")
-    fun getReport(@Body getReportBody: GetReportBody,
+    fun getReport(@Body reportDateStringsBody: ReportDateStringsBody?,
+                  @Body reportEpochIntegersBody: ReportEpochIntegersBody?,
+                  @Body reportDayStringBody: ReportDayStringBody?,
                   @Header("employeeCode") employeeCode: String? = null,
                   @Header("eventId") eventId: Int? = null,
                   @Query("offset") offset: Int? = null,
@@ -81,7 +82,7 @@ interface BucketDataSource {
     /** EVENTS **/
 
     @POST("events")
-    fun getEvents(@Body getEventsBody: GetEventsBody,
+    fun getEvents(@Body getEventsBody: EventsIdBody,
                   @Query("offset") offset: Int? = null,
                   @Query("limit") limit: Int? = null,
                   @Header("x-functions-key") terminalSecret: String? = Credentials.terminalSecret,

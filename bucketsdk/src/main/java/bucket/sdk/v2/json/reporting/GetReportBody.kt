@@ -1,13 +1,5 @@
 package bucket.sdk.v2.json.reporting
 
-import java.io.Serializable
-
-abstract class GetReportBody : Serializable {
-    abstract val reportTerminalCode: String?
-    abstract val employeeCode: String?
-    abstract val employeeId: Int?
-}
-
 /**
  * @param start This date is formatted as 'yyyy-MM-dd HH:mm:ssZZZ'
  * @param end This date is formatted as 'yyyy-MM-dd HH:mm:ssZZZ'
@@ -22,10 +14,9 @@ abstract class GetReportBody : Serializable {
 data class ReportDateStringsBody(
         val start: String,
         val end: String,
-        override val reportTerminalCode: String? = null,
-        override val employeeCode: String? = null,
-        override val employeeId: Int? = null)
-    : GetReportBody()
+        val reportTerminalCode: String? = null,
+        val employeeCode: String? = null,
+        val employeeId: Int? = null)
 
 /**
  * @param start This is the starting epoch integer in SECONDS that is UTC based.
@@ -41,10 +32,9 @@ data class ReportDateStringsBody(
 data class ReportEpochIntegersBody(
         val start: Int,
         val end: Int,
-        override val reportTerminalCode: String? = null,
-        override val employeeCode: String? = null,
-        override val employeeId: Int? = null)
-    : GetReportBody()
+        val reportTerminalCode: String? = null,
+        val employeeCode: String? = null,
+        val employeeId: Int? = null)
 
 /**
  * @param day This is formatted as 'yyyy-MM-dd'. This covers starting from 12AM that day to 11:59:59PM that day.
@@ -58,9 +48,8 @@ data class ReportEpochIntegersBody(
  */
 data class ReportDayStringBody(
         val day: String,
-        override val reportTerminalCode: String? = null,
-        override val employeeCode: String? = null,
-        override val employeeId: Int? = null)
-    : GetReportBody()
+        val reportTerminalCode: String? = null,
+        val employeeCode: String? = null,
+        val employeeId: Int? = null)
 
 

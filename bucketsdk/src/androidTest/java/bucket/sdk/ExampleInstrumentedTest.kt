@@ -4,6 +4,8 @@ import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import bucket.sdk.v2.Bucket
 import bucket.sdk.v2.Callback
+import bucket.sdk.v2.json.reporting.GetReportResponse
+import bucket.sdk.v2.json.reporting.ReportDateStringsBody
 import bucket.sdk.v2.json.transaction.CreateTransactionResponse
 import bucket.sdk.v2.json.transaction.TransactionBody
 import com.pawegio.kandroid.e
@@ -32,45 +34,37 @@ class ExampleInstrumentedTest {
     @Test fun testUseAppContext() {
         Bucket.appContext = InstrumentationRegistry.getTargetContext()
         assert(bucket.sdk.v2.cache.Credentials.country != null)
+        Thread.sleep(5000)
     }
 
     @Test fun testRegisteringDevice() {
-        val syncObject = Object()
         Bucket.registerTerminal("bckt-1", "us", object : Callback.RegisterTerminal {
             override fun onSuccess() {
                 e("testRegisteringDevice - success")
                 assert(true)
-                synchronized(syncObject) { syncObject.notify() }
             }
             override fun onError(error: String) {
                 e("testRegisteringDevice - failed")
                 assert(false)
-                synchronized(syncObject) { syncObject.notify() }
             }
         })
-        synchronized(syncObject) { syncObject.wait() }
+        Thread.sleep(10000)
     }
 
     @Test fun testGetBillDenominations() {
-//        setupTerminal()
-        val syncObject = Object()
         Bucket.getBillDenominations(object : Callback.GetBillDenominations {
             override fun onSuccess() {
                 assert(true)
-                synchronized(syncObject) { syncObject.notify() }
             }
 
             override fun onError(error: String) {
                 assert(false)
-                synchronized(syncObject) { syncObject.notify() }
             }
         })
-        synchronized(syncObject) { syncObject.wait() }
+        Thread.sleep(10000)
     }
 
     @Test fun testCreateTransaction() {
-//        setupTerminal()
-        val syncObject = Object()
         val transactionBody = TransactionBody(4.2).apply {
             totalTransactionAmount = 9.23
             locationId = "there"
@@ -81,32 +75,43 @@ class ExampleInstrumentedTest {
             override fun onSuccess(createTransactionResponse: CreateTransactionResponse) {
                 customerCode = createTransactionResponse.customerCode.toString()
                 assertEquals(4.2, createTransactionResponse.amount)
-                synchronized(syncObject) { syncObject.notify() }
             }
 
             override fun onError(error: String) {
                 assert(false)
-                synchronized(syncObject) { syncObject.notify() }
             }
         })
-        synchronized(syncObject) { syncObject.wait() }
+        Thread.sleep(10000)
     }
 
     @Test fun testDeleteTransaction() {
-//        setupTerminal()
-        val syncObject = Object()
         Bucket.deleteTransaction(customerCode, object : Callback.DeleteTransaction {
             override fun onSuccess(message: String) {
                 assert(message.isNotBlank())
-                synchronized(syncObject) { syncObject.notify() }
             }
 
             override fun onError(error: String) {
                 assert(false)
-                synchronized(syncObject) { syncObject.notify() }
             }
         })
-        synchronized(syncObject) { syncObject.wait() }
+        Thread.sleep(10000)
+    }
+
+    @Test fun testGetReport() {
+        val getReportBody = ReportDateStringsBody(
+                start = "2018-11-02 16:01:56+0800",
+                end = "2018-11-29 16:01:56+0800"
+        )
+        Bucket.getReport(getReportBody, object : Callback.GetReport {
+            override fun onSuccess(getReportResponse: GetReportResponse) {
+                assert(getReportResponse.bucketSales != null)
+            }
+
+            override fun onError(error: String) {
+                assert(false)
+            }
+        })
+        Thread.sleep(5000)
     }
 
     @Test fun testBucketAmount() {

@@ -6,13 +6,12 @@ import bucket.sdk.v2.cache.RetailerInfo
 import bucket.sdk.v2.cache.Terminal
 import bucket.sdk.v2.json.events.CreateUpdateEventBody
 import bucket.sdk.v2.json.events.Event
-import bucket.sdk.v2.json.events.GetEventsBody
+import bucket.sdk.v2.json.events.EventsIdBody
 import bucket.sdk.v2.json.reporting.*
 import bucket.sdk.v2.json.terminal.RegisterTerminalBody
 import bucket.sdk.v2.json.transaction.CreateTransactionResponse
 import bucket.sdk.v2.json.transaction.TransactionBody
 import bucket.sdk.v2.util.ext.asErrorResponse
-import com.pawegio.kandroid.e
 import io.reactivex.Single
 import io.reactivex.Completable
 import retrofit2.Response
@@ -36,7 +35,9 @@ interface BucketRepository : Serializable {
 
     /** reporting **/
     fun getReport(
-            getReportBody: GetReportBody,
+            reportDateStringsBody: ReportDateStringsBody? = null,
+            reportEpochIntegersBody: ReportEpochIntegersBody? = null,
+            reportDayStringBody: ReportDayStringBody? = null,
             employeeCode: String? = null,
             eventId: Int? = null,
             offset: Int? = null,
@@ -44,7 +45,7 @@ interface BucketRepository : Serializable {
 
     /** events **/
     fun getEvents(
-            getEventsBody: GetEventsBody,
+            getEventsBody: EventsIdBody,
             offset: Int? = null,
             limit: Int? = null): Single<List<Event>>
     fun createUpdateEvent(createUpdateEventBody: CreateUpdateEventBody): Single<String>
@@ -142,9 +143,17 @@ class BucketRepositoryImpl(private val bucketDataSource: BucketDataSource) : Buc
                 }
     }
 
-    override fun getReport(getReportBody: GetReportBody, employeeCode: String?, eventId: Int?, offset: Int?, limit: Int?): Single<GetReportResponse> {
+    override fun getReport(reportDateStringsBody: ReportDateStringsBody?,
+                           reportEpochIntegersBody: ReportEpochIntegersBody?,
+                           reportDayStringBody: ReportDayStringBody?,
+                           employeeCode: String?,
+                           eventId: Int?,
+                           offset: Int?,
+                           limit: Int?): Single<GetReportResponse> {
         return bucketDataSource.getReport(
-                getReportBody = getReportBody,
+                reportDateStringsBody = reportDateStringsBody,
+                reportEpochIntegersBody = reportEpochIntegersBody,
+                reportDayStringBody = reportDayStringBody,
                 employeeCode = employeeCode,
                 eventId = eventId,
                 offset = offset,
@@ -155,7 +164,7 @@ class BucketRepositoryImpl(private val bucketDataSource: BucketDataSource) : Buc
                 }
     }
 
-    override fun getEvents(getEventsBody: GetEventsBody, offset: Int?, limit: Int?): Single<List<Event>> {
+    override fun getEvents(getEventsBody: EventsIdBody, offset: Int?, limit: Int?): Single<List<Event>> {
         return bucketDataSource.getEvents(getEventsBody, offset, limit)
                 .map { response ->
                     if (response.isSuccessful) response.body().events
