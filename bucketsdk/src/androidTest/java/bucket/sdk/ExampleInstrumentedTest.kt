@@ -44,7 +44,7 @@ class ExampleInstrumentedTest {
                 assert(false)
             }
         })
-        Thread.sleep(10000)
+        Thread.sleep(5000)
     }
 
     @Test fun test3GetBillDenominations() {
@@ -57,7 +57,7 @@ class ExampleInstrumentedTest {
                 assert(false)
             }
         })
-        Thread.sleep(10000)
+        Thread.sleep(5000)
     }
 
     @Test fun test4CreateTransaction() {
@@ -77,7 +77,7 @@ class ExampleInstrumentedTest {
                 assert(false)
             }
         })
-        Thread.sleep(10000)
+        Thread.sleep(5000)
     }
 
     @Test fun test5DeleteTransaction() {
@@ -90,7 +90,7 @@ class ExampleInstrumentedTest {
                 assert(false)
             }
         })
-        Thread.sleep(10000)
+        Thread.sleep(5000)
     }
 
     @Test fun test6GetReport() {
@@ -98,7 +98,7 @@ class ExampleInstrumentedTest {
                 start = "2018-11-02 16:01:56+0800",
                 end = "2018-11-29 16:01:56+0800"
         )
-        Bucket.getReport(getReportBody, object : Callback.GetReport {
+        Bucket.getReport(getReportBody, callback = object : Callback.GetReport {
             override fun onSuccess(getReportResponse: GetReportResponse) {
                 assert(getReportResponse.bucketSales != null)
             }

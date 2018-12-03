@@ -37,7 +37,6 @@ interface BucketRepository : Serializable {
     fun getReport(
             getReportBody: Any,
             employeeCode: String? = null,
-            eventId: Int? = null,
             offset: Int? = null,
             limit: Int? = null): Single<GetReportResponse>
 
@@ -143,13 +142,11 @@ class BucketRepositoryImpl(private val bucketDataSource: BucketDataSource) : Buc
 
     override fun getReport(getReportBody: Any,
                            employeeCode: String?,
-                           eventId: Int?,
                            offset: Int?,
                            limit: Int?): Single<GetReportResponse> {
         return bucketDataSource.getReport(
                 getReportBody = getReportBody,
                 employeeCode = employeeCode,
-                eventId = eventId,
                 offset = offset,
                 limit = limit)
                 .map { response ->

@@ -154,9 +154,12 @@ class Bucket {
          */
         @SuppressLint("CheckResult")
         @JvmStatic fun getReport(getReportBody: ReportDateStringsBody,
+                                 employeeCode: String? = null,
+                                 offset: Int? = null,
+                                 limit: Int? = null,
                                  callback: Callback.GetReport) {
             // request
-            BucketRepositoryImpl(BucketService.retrofit).getReport(getReportBody)
+            BucketRepositoryImpl(BucketService.retrofit).getReport(getReportBody, employeeCode, offset, limit)
                     .with(ApplicationSchedulerProvider())
                     .subscribe(
                             { getReportResponse -> callback.onSuccess(getReportResponse)},
@@ -170,9 +173,12 @@ class Bucket {
          */
         @SuppressLint("CheckResult")
         @JvmStatic fun getReport(getReportBody: ReportEpochIntegersBody,
+                                 employeeCode: String? = null,
+                                 offset: Int? = null,
+                                 limit: Int? = null,
                                  callback: Callback.GetReport) {
             // request
-            BucketRepositoryImpl(BucketService.retrofit).getReport(getReportBody)
+            BucketRepositoryImpl(BucketService.retrofit).getReport(getReportBody, employeeCode, offset, limit)
                     .with(ApplicationSchedulerProvider())
                     .subscribe(
                             { getReportResponse -> callback.onSuccess(getReportResponse)},
@@ -186,9 +192,12 @@ class Bucket {
          */
         @SuppressLint("CheckResult")
         @JvmStatic fun getReport(getReportBody: ReportDayStringBody,
+                                 employeeCode: String? = null,
+                                 offset: Int? = null,
+                                 limit: Int? = null,
                                  callback: Callback.GetReport) {
             // request
-            BucketRepositoryImpl(BucketService.retrofit).getReport(getReportBody)
+            BucketRepositoryImpl(BucketService.retrofit).getReport(getReportBody, employeeCode, offset, limit)
                     .with(ApplicationSchedulerProvider())
                     .subscribe(
                             { getReportResponse -> callback.onSuccess(getReportResponse)},

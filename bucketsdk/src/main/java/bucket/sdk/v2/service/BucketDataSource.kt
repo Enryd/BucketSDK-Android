@@ -69,7 +69,6 @@ interface BucketDataSource {
     @POST("report")
     fun getReport(@Body getReportBody: Any,
                   @Header("employeeCode") employeeCode: String? = null,
-                  @Header("eventId") eventId: Int? = null,
                   @Query("offset") offset: Int? = null,
                   @Query("limit") limit: Int? = null,
                   @Header("x-functions-key") terminalSecret: String? = Credentials.terminalSecret,
