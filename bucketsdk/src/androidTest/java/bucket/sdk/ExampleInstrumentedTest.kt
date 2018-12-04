@@ -2,6 +2,7 @@ package bucket.sdk
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
+import android.util.Log
 import bucket.sdk.v2.Bucket
 import bucket.sdk.v2.Callback
 import bucket.sdk.v2.json.reporting.GetReportResponse
@@ -11,8 +12,6 @@ import bucket.sdk.v2.json.transaction.TransactionBody
 import com.pawegio.kandroid.e
 import org.junit.Test
 import org.junit.runner.RunWith
-
-import org.junit.Assert.*
 import org.junit.FixMethodOrder
 import org.junit.runners.MethodSorters
 
@@ -30,88 +29,119 @@ class ExampleInstrumentedTest {
     @Test fun test1UseAppContext() {
         Bucket.appContext = InstrumentationRegistry.getTargetContext()
         assert(bucket.sdk.v2.cache.Credentials.country != null)
-        Thread.sleep(5000)
     }
 
     @Test fun test2RegisteringDevice() {
+        val syncObject = Object()
         Bucket.registerTerminal("bckt-1", "us", object : Callback.RegisterTerminal {
             override fun onSuccess() {
                 e("testRegisteringDevice - success")
                 assert(true)
+                synchronized (syncObject) { syncObject.notify() }
             }
             override fun onError(error: String) {
                 e("testRegisteringDevice - failed")
                 assert(false)
+                synchronized (syncObject) { syncObject.notify() }
             }
         })
-        Thread.sleep(5000)
+        synchronized (syncObject) { syncObject.wait() }
     }
 
     @Test fun test3GetBillDenominations() {
+        val syncObject = Object()
         Bucket.getBillDenominations(object : Callback.GetBillDenominations {
             override fun onSuccess() {
                 assert(true)
+                synchronized (syncObject) { syncObject.notify() }
             }
 
             override fun onError(error: String) {
                 assert(false)
+                synchronized (syncObject) { syncObject.notify() }
             }
         })
-        Thread.sleep(5000)
+        synchronized (syncObject) {
+            syncObject.wait()
+        }
     }
 
     @Test fun test4CreateTransaction() {
+        Log.e("customerCode1", customerCode)
         val transactionBody = TransactionBody(4.2).apply {
             totalTransactionAmount = 9.23
             locationId = "there"
             clientTransactionId = null
             sample = false
         }
+        val syncObject = Object()
         Bucket.createTransaction(transactionBody, callback = object : Callback.CreateTransaction {
             override fun onSuccess(createTransactionResponse: CreateTransactionResponse) {
                 customerCode = createTransactionResponse.customerCode.toString()
-                assertEquals(4.2, createTransactionResponse.amount)
+                assert(4.2 == createTransactionResponse.amount)
+                synchronized (syncObject) { syncObject.notify() }
             }
 
             override fun onError(error: String) {
                 assert(false)
+                synchronized (syncObject) { syncObject.notify() }
             }
         })
-        Thread.sleep(5000)
+        synchronized (syncObject) { syncObject.wait() }
     }
 
-    @Test fun test5DeleteTransaction() {
+    @Test fun test5RefundTransaction() {
+        val syncObject = Object()
+        Bucket.refundTransaction(customerCode, object : Callback.RefundTransaction {
+            override fun onSuccess(message: String) {
+                assert(message.isNotBlank())
+                synchronized (syncObject) { syncObject.notify() }
+            }
+            override fun onError(error: String) {
+                assert(false)
+                synchronized (syncObject) { syncObject.notify() }
+            }
+        })
+        synchronized (syncObject) { syncObject.wait() }
+    }
+
+    @Test fun test6DeleteTransaction() {
+        val syncObject = Object()
         Bucket.deleteTransaction(customerCode, object : Callback.DeleteTransaction {
             override fun onSuccess(message: String) {
                 assert(message.isNotBlank())
+                synchronized (syncObject) { syncObject.notify() }
             }
 
             override fun onError(error: String) {
                 assert(false)
+                synchronized (syncObject) { syncObject.notify() }
             }
         })
-        Thread.sleep(5000)
+        synchronized (syncObject) { syncObject.wait() }
     }
 
-    @Test fun test6GetReport() {
+    @Test fun test7GetReport() {
         val getReportBody = ReportDateStringsBody(
                 start = "2018-11-02 16:01:56+0800",
                 end = "2018-11-29 16:01:56+0800"
         )
+        val syncObject = Object()
         Bucket.getReport(getReportBody, callback = object : Callback.GetReport {
             override fun onSuccess(getReportResponse: GetReportResponse) {
                 assert(getReportResponse.bucketSales != null)
+                synchronized (syncObject) { syncObject.notify() }
             }
 
             override fun onError(error: String) {
                 assert(false)
+                synchronized (syncObject) { syncObject.notify() }
             }
         })
-        Thread.sleep(5000)
+        synchronized (syncObject) { syncObject.wait() }
     }
 
-    @Test fun test7BucketAmount() {
-//        setupTerminal()
+    @Test fun test8BucketAmount() {
         val bucketAmount = Bucket.bucketAmount(7.69)
         assert(bucketAmount == 0.6900000000000004)
     }

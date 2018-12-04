@@ -21,6 +21,8 @@ data class ReportTransaction(
         val disputedBy: String?,
         val refunded: String?,
         val refundedBy: String?,
+        val redeemed: String?,
+        val redeemedBy: String?,
         val locationId: String?,
         val clientTransactionId: String?,
         val terminalCode: String?,
