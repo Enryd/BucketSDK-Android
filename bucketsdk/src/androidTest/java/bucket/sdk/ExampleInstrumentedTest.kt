@@ -2,14 +2,15 @@ package bucket.sdk
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
-import android.util.Log
 import bucket.sdk.v2.Bucket
 import bucket.sdk.v2.Callback
+import bucket.sdk.v2.cache.TestCache
 import bucket.sdk.v2.json.reporting.GetReportResponse
 import bucket.sdk.v2.json.reporting.ReportDateStringsBody
 import bucket.sdk.v2.json.transaction.CreateTransactionResponse
 import bucket.sdk.v2.json.transaction.TransactionBody
 import com.pawegio.kandroid.e
+import junit.framework.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.FixMethodOrder
@@ -24,11 +25,10 @@ import org.junit.runners.MethodSorters
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class ExampleInstrumentedTest {
 
-    private var customerCode: String = ""
-
     @Test fun test1UseAppContext() {
         Bucket.appContext = InstrumentationRegistry.getTargetContext()
         assert(bucket.sdk.v2.cache.Credentials.country != null)
+        TestCache.customerCode = ""
     }
 
     @Test fun test2RegisteringDevice() {
@@ -41,7 +41,7 @@ class ExampleInstrumentedTest {
             }
             override fun onError(error: String) {
                 e("testRegisteringDevice - failed")
-                assert(false)
+                assertTrue(false)
                 synchronized (syncObject) { syncObject.notify() }
             }
         })
@@ -57,17 +57,15 @@ class ExampleInstrumentedTest {
             }
 
             override fun onError(error: String) {
-                assert(false)
+                assertTrue(false)
                 synchronized (syncObject) { syncObject.notify() }
             }
         })
-        synchronized (syncObject) {
-            syncObject.wait()
-        }
+        synchronized (syncObject) { syncObject.wait() }
     }
 
     @Test fun test4CreateTransaction() {
-        Log.e("customerCode1", customerCode)
+        e("customerCode1", TestCache.customerCode)
         val transactionBody = TransactionBody(4.2).apply {
             totalTransactionAmount = 9.23
             locationId = "there"
@@ -77,13 +75,13 @@ class ExampleInstrumentedTest {
         val syncObject = Object()
         Bucket.createTransaction(transactionBody, callback = object : Callback.CreateTransaction {
             override fun onSuccess(createTransactionResponse: CreateTransactionResponse) {
-                customerCode = createTransactionResponse.customerCode.toString()
+                TestCache.customerCode = createTransactionResponse.customerCode.toString()
                 assert(4.2 == createTransactionResponse.amount)
                 synchronized (syncObject) { syncObject.notify() }
             }
 
             override fun onError(error: String) {
-                assert(false)
+                assertTrue(false)
                 synchronized (syncObject) { syncObject.notify() }
             }
         })
@@ -92,13 +90,13 @@ class ExampleInstrumentedTest {
 
     @Test fun test5RefundTransaction() {
         val syncObject = Object()
-        Bucket.refundTransaction(customerCode, object : Callback.RefundTransaction {
+        Bucket.refundTransaction(TestCache.customerCode, object : Callback.RefundTransaction {
             override fun onSuccess(message: String) {
-                assert(message.isNotBlank())
+                assert(message == "Successfully refunded the transaction.")
                 synchronized (syncObject) { syncObject.notify() }
             }
             override fun onError(error: String) {
-                assert(false)
+                assertTrue(false)
                 synchronized (syncObject) { syncObject.notify() }
             }
         })
@@ -107,14 +105,14 @@ class ExampleInstrumentedTest {
 
     @Test fun test6DeleteTransaction() {
         val syncObject = Object()
-        Bucket.deleteTransaction(customerCode, object : Callback.DeleteTransaction {
+        Bucket.deleteTransaction(TestCache.customerCode, object : Callback.DeleteTransaction {
             override fun onSuccess(message: String) {
-                assert(message.isNotBlank())
+                assert(message == "Successfully deleted the transaction.")
                 synchronized (syncObject) { syncObject.notify() }
             }
 
             override fun onError(error: String) {
-                assert(false)
+                assertTrue(false)
                 synchronized (syncObject) { syncObject.notify() }
             }
         })
@@ -129,12 +127,12 @@ class ExampleInstrumentedTest {
         val syncObject = Object()
         Bucket.getReport(getReportBody, callback = object : Callback.GetReport {
             override fun onSuccess(getReportResponse: GetReportResponse) {
-                assert(getReportResponse.bucketSales != null)
+                assert(getReportResponse.transactions.isNotEmpty())
                 synchronized (syncObject) { syncObject.notify() }
             }
 
             override fun onError(error: String) {
-                assert(false)
+                assertTrue(false)
                 synchronized (syncObject) { syncObject.notify() }
             }
         })
