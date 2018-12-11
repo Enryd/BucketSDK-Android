@@ -7,9 +7,9 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-object WebServiceHelper {
+internal object WebServiceHelper {
 
-    inline fun <reified T> createWebService(baseUrl: String, vararg defaultHeaders: Pair<String, String>): T {
+    internal inline fun <reified T> createWebService(baseUrl: String, vararg defaultHeaders: Pair<String, String>): T {
         // okhttp client
         val okHttpClient = OkHttpClient.Builder()
                 .connectTimeout(60L, TimeUnit.SECONDS)  // 60s connection timeout

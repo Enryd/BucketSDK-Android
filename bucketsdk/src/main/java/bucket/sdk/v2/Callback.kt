@@ -1,6 +1,7 @@
 package bucket.sdk.v2
 
 import bucket.sdk.v2.json.events.Event
+import bucket.sdk.v2.json.reporting.GetEventReportResponse
 import bucket.sdk.v2.json.reporting.GetReportResponse
 import bucket.sdk.v2.json.transaction.CreateTransactionResponse
 
@@ -29,19 +30,27 @@ interface Callback {
         fun onSuccess(getReportResponse: GetReportResponse)
         fun onError(error: String)
     }
+    interface GetEventReport {
+        fun onSuccess(getEventReportResponse: GetEventReportResponse)
+        fun onError(error: String)
+    }
     interface GetEvents {
         fun onSuccess(events: List<Event>)
         fun onError(error: String)
     }
     interface CreateEvent {
-        fun onSuccess(message: String)
+        fun onSuccess(eventId: Int, message: String)
         fun onError(error: String)
     }
     interface UpdateEvent {
-        fun onSuccess(message: String)
+        fun onSuccess(eventId: Int, message: String)
         fun onError(error: String)
     }
     interface DeleteEvent {
+        fun onSuccess(message: String)
+        fun onError(error: String)
+    }
+    interface SendExport {
         fun onSuccess(message: String)
         fun onError(error: String)
     }

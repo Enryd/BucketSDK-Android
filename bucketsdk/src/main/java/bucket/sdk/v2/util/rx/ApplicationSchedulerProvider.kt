@@ -1,6 +1,5 @@
 package bucket.sdk.v2.util.rx
 
-import bucket.sdk.v2.util.rx.SchedulerProvider
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -8,7 +7,7 @@ import io.reactivex.schedulers.Schedulers
 /**
  * Scheduler provider
  */
-class ApplicationSchedulerProvider : SchedulerProvider {
+internal class ApplicationSchedulerProvider : SchedulerProvider {
 
     override fun io() = Schedulers.io()
 

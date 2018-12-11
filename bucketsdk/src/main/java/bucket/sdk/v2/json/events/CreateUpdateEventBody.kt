@@ -2,11 +2,6 @@ package bucket.sdk.v2.json.events
 
 import java.io.Serializable
 
-interface CreateUpdateEventBody : Serializable
-
-interface CreateEventBody : CreateUpdateEventBody
-interface UpdateEventBody : CreateUpdateEventBody
-
 /**
  * @param eventName This is the name of the event.
  * @param eventMessage This is the message of the event.
@@ -18,7 +13,7 @@ data class CreateEventDateStringsBody(
         val eventMessage: String,
         val start: String,
         val end: String)
-    : CreateEventBody
+    : Serializable
 
 /**
  * @param eventName This is the name of the event.
@@ -31,32 +26,20 @@ data class CreateEventEpochIntegersBody(
         val eventMessage: String,
         val start: Int,
         val end: Int)
-    : CreateEventBody
+    : Serializable
 
-/**
- * @param eventName This is the name of the event.
- * @param eventMessage This is the message of the event.
- * @param start The date format is yyyy-MM-dd HH:mm:ssZZZ
- * @param end The date format is yyyy-MM-dd HH:mm:ssZZZ
- */
 data class UpdateEventDateStringsBody(
         val id: Int,
-        val eventName: String?,
-        val eventMessage: String?,
-        val start: String?,
-        val end: String?)
-    : UpdateEventBody
+        val eventName: String? = null,
+        val eventMessage: String? = null,
+        val start: String? = null,
+        val end: String? = null)
+    : Serializable
 
-/**
- * @param eventName This is the name of the event.
- * @param eventMessage This is the message of the event.
- * @param start This is the starting epoch integer in SECONDS that is UTC based.
- * @param end This is the ending epoch integer in SECONDS that is UTC based.
- */
 data class UpdateEventEpochIntegersBody(
         val id: Int,
-        val eventName: String?,
-        val eventMessage: String?,
-        val start: Int?,
-        val end: Int?)
-    : UpdateEventBody
+        val eventName: String? = null,
+        val eventMessage: String? = null,
+        val start: Int? = null,
+        val end: Int? = null)
+    : Serializable

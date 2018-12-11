@@ -1,5 +1,7 @@
 package bucket.sdk.v2.json.reporting
 
+import java.io.Serializable
+
 /**
  * @param start This date is formatted as 'yyyy-MM-dd HH:mm:ssZZZ'
  * @param end This date is formatted as 'yyyy-MM-dd HH:mm:ssZZZ'
@@ -17,6 +19,7 @@ data class ReportDateStringsBody(
         val reportTerminalCode: String? = null,
         val employeeCode: String? = null,
         val employeeId: Int? = null)
+    : Serializable
 
 /**
  * @param start This is the starting epoch integer in SECONDS that is UTC based.
@@ -35,6 +38,7 @@ data class ReportEpochIntegersBody(
         val reportTerminalCode: String? = null,
         val employeeCode: String? = null,
         val employeeId: Int? = null)
+    : Serializable
 
 /**
  * @param day This is formatted as 'yyyy-MM-dd'. This covers starting from 12AM that day to 11:59:59PM that day.
@@ -51,5 +55,6 @@ data class ReportDayStringBody(
         val reportTerminalCode: String? = null,
         val employeeCode: String? = null,
         val employeeId: Int? = null)
+    : Serializable
 
 

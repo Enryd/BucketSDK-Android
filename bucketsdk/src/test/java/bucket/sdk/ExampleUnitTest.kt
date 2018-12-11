@@ -1,9 +1,5 @@
 package bucket.sdk
 
-import bucket.sdk.callbacks.CreateTransaction
-import bucket.sdk.models.Error
-import bucket.sdk.models.Transaction
-import org.json.JSONObject
 import org.junit.Test
 import org.junit.Assert.*
 

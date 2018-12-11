@@ -5,7 +5,7 @@ import io.reactivex.Scheduler
 /**
  * Rx Scheduler Provider
  */
-interface SchedulerProvider {
+internal interface SchedulerProvider {
     fun io(): Scheduler
     fun ui(): Scheduler
     fun computation(): Scheduler

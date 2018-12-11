@@ -3,7 +3,10 @@ package bucket.sdk.v2.service
 import android.annotation.SuppressLint
 import android.os.Build
 import bucket.sdk.v2.cache.Credentials
+import bucket.sdk.v2.enum.ExportType
 import bucket.sdk.v2.json.events.*
+import bucket.sdk.v2.json.export.SendExportBody
+import bucket.sdk.v2.json.export.SendExportResponse
 import bucket.sdk.v2.json.reporting.*
 import bucket.sdk.v2.json.terminal.RegisterTerminalBody
 import bucket.sdk.v2.json.terminal.GetBillDenominationsResponse
@@ -12,7 +15,6 @@ import bucket.sdk.v2.json.transaction.TransactionBody
 import bucket.sdk.v2.json.transaction.CreateTransactionResponse
 import bucket.sdk.v2.json.transaction.DeleteTransactionResponse
 import bucket.sdk.v2.json.transaction.RefundTransactionResponse
-import com.google.gson.JsonObject
 import io.reactivex.Single
 import retrofit2.Response
 import retrofit2.http.*
@@ -64,6 +66,32 @@ interface BucketDataSource {
                           @Header("country") country: String? = Credentials.country)
             : Single<Response<RefundTransactionResponse>>
 
+    /** EVENTS **/
+
+    @POST("events")
+    fun getEvents(@Body getEventsBody: Any,
+                  @Query("offset") offset: Int? = null,
+                  @Query("limit") limit: Int? = null,
+                  @Header("x-functions-key") terminalSecret: String? = Credentials.terminalSecret,
+                  @Header("retailerCode") retailerCode: String? = Credentials.retailerCode,
+                  @Header("terminalCode") terminalCode: String? = Build.SERIAL,
+                  @Header("country") country: String? = Credentials.country)
+            : Single<Response<GetEventsResponse>>
+
+    @PUT("event")
+    fun createUpdateEvent(@Body createUpdateEventBody: Any,
+                          @Header("x-functions-key") terminalSecret: String? = Credentials.terminalSecret,
+                          @Header("retailerCode") retailerCode: String? = Credentials.retailerCode,
+                          @Header("terminalCode") terminalCode: String? = Build.SERIAL,
+                          @Header("country") country: String? = Credentials.country)
+            : Single<Response<CreateUpdateEventResponse>>
+
+    @DELETE("event/{id}")
+    fun deleteEvent(@Path("id") id: Int,
+                    @Header("x-functions-key") terminalSecret: String? = Credentials.terminalSecret,
+                    @Header("retailerCode") retailerCode: String? = Credentials.retailerCode)
+            : Single<Response<DeleteEventResponse>>
+
     /** REPORTING **/
 
     @POST("report")
@@ -77,30 +105,25 @@ interface BucketDataSource {
                   @Header("country") country: String? = Credentials.country)
             : Single<Response<GetReportResponse>>
 
-    /** EVENTS **/
+    @POST("report/events")
+    fun getEventReport(@Body getEventReportBody: Any,
+                       @Query("offset") offset: Int? = null,
+                       @Query("limit") limit: Int? = null,
+                       @Header("x-functions-key") terminalSecret: String? = Credentials.terminalSecret,
+                       @Header("retailerCode") retailerCode: String? = Credentials.retailerCode,
+                       @Header("terminalCode") terminalCode: String? = Build.SERIAL,
+                       @Header("country") country: String? = Credentials.country)
+            : Single<Response<GetEventReportResponse>>
 
-    @POST("events")
-    fun getEvents(@Body getEventsBody: EventsIdBody,
-                  @Query("offset") offset: Int? = null,
-                  @Query("limit") limit: Int? = null,
-                  @Header("x-functions-key") terminalSecret: String? = Credentials.terminalSecret,
-                  @Header("retailerCode") retailerCode: String? = Credentials.retailerCode,
-                  @Header("terminalCode") terminalCode: String? = Build.SERIAL,
-                  @Header("country") country: String? = Credentials.country)
-            : Single<Response<GetEventsResponse>>
+    /** EXPORT **/
 
-    @PUT("event")
-    fun createUpdateEvent(@Body createUpdateEventBody: CreateUpdateEventBody,
-                          @Header("x-functions-key") terminalSecret: String? = Credentials.terminalSecret,
-                          @Header("retailerCode") retailerCode: String? = Credentials.retailerCode,
-                          @Header("terminalCode") terminalCode: String? = Build.SERIAL,
-                          @Header("country") country: String? = Credentials.country)
-            : Single<Response<CreateUpdateEventResponse>>
-
-    @DELETE("event/{id}")
-    fun deleteEvent(@Path("id") id: Int,
-                    @Header("x-functions-key") terminalSecret: String? = Credentials.terminalSecret,
-                    @Header("retailerCode") retailerCode: String? = Credentials.retailerCode)
-            : Single<Response<DeleteEventResponse>>
+    @POST("export/events")
+    fun sendExport(@Body sendExportBody: SendExportBody,
+                   @Query("exportType") exportType: ExportType? = ExportType.CSV,
+                   @Header("x-functions-key") terminalSecret: String? = Credentials.terminalSecret,
+                   @Header("retailerCode") retailerCode: String? = Credentials.retailerCode,
+                   @Header("terminalCode") terminalCode: String? = Build.SERIAL,
+                   @Header("country") country: String? = Credentials.country)
+            : Single<Response<SendExportResponse>>
 
 }

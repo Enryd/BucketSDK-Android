@@ -5,7 +5,7 @@ import bucket.sdk.v2.Bucket
 import bucket.sdk.v2.DeploymentEnvironment
 import bucket.sdk.v2.util.WebServiceHelper
 
-object BucketService {
+internal object BucketService {
 
     private const val URI_SCHEME = "https"
 
