@@ -3,6 +3,12 @@ package bucket.sdk;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.jetbrains.annotations.NotNull;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
+
 import bucket.sdk.v2.Bucket;
 import bucket.sdk.v2.Callback;
 import bucket.sdk.v2.Callback.CreateTransaction;
@@ -12,15 +18,8 @@ import bucket.sdk.v2.json.reporting.GetReportResponse;
 import bucket.sdk.v2.json.reporting.ReportDateStringsBody;
 import bucket.sdk.v2.json.transaction.CreateTransactionResponse;
 import bucket.sdk.v2.json.transaction.TransactionBody;
-
 import kotlin.jvm.internal.Intrinsics;
 import kotlin.text.StringsKt;
-
-import org.jetbrains.annotations.NotNull;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -28,7 +27,7 @@ import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class RetailerInstrumentedJavaTest {
+public class MarketingInstrumentedJavaTest {
     @Test
     public void test01UseAppContext() {
         Bucket.setAppContext(InstrumentationRegistry.getTargetContext());

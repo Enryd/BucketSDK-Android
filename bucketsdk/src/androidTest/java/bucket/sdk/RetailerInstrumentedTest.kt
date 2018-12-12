@@ -24,14 +24,14 @@ import org.junit.runners.MethodSorters
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class RetailerInstrumentedTest {
 
-    @Test fun test1UseAppContext() {
+    @Test fun test01UseAppContext() {
         Bucket.appContext = InstrumentationRegistry.getTargetContext()
         Credentials.terminalSecret
         assertTrue(true)
         TestCache.customerCode = ""
     }
 
-    @Test fun test2RegisteringDevice() {
+    @Test fun test02RegisteringDevice() {
         val syncObject = Object()
         Bucket.registerTerminal("bckt-1", "us", object : Callback.RegisterTerminal {
             override fun onSuccess() {
@@ -46,7 +46,7 @@ class RetailerInstrumentedTest {
         synchronized (syncObject) { syncObject.wait() }
     }
 
-    @Test fun test3GetBillDenominations() {
+    @Test fun test03GetBillDenominations() {
         val syncObject = Object()
         Bucket.getBillDenominations(object : Callback.GetBillDenominations {
             override fun onSuccess() {
@@ -62,7 +62,7 @@ class RetailerInstrumentedTest {
         synchronized (syncObject) { syncObject.wait() }
     }
 
-    @Test fun test4CreateTransaction() {
+    @Test fun test04CreateTransaction() {
         val transactionBody = TransactionBody(4.2).apply {
             totalTransactionAmount = 9.23
             locationId = "there"
@@ -85,7 +85,7 @@ class RetailerInstrumentedTest {
         synchronized (syncObject) { syncObject.wait() }
     }
 
-    @Test fun test5RefundTransaction() {
+    @Test fun test05RefundTransaction() {
         val syncObject = Object()
         Bucket.refundTransaction(TestCache.customerCode, object : Callback.RefundTransaction {
             override fun onSuccess(message: String) {
